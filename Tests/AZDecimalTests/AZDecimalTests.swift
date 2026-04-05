@@ -154,6 +154,120 @@ final class RoundingTests: XCTestCase {
     }
 }
 
+// MARK: - Comparable
+
+final class ComparableTests: XCTestCase {
+
+    func test_lessThan_basic() {
+        XCTAssertTrue(AZDecimal("1.23") < AZDecimal("4.56"))
+        XCTAssertFalse(AZDecimal("4.56") < AZDecimal("1.23"))
+        XCTAssertFalse(AZDecimal("1.23") < AZDecimal("1.23"))
+    }
+
+    func test_lessThan_negative() {
+        XCTAssertTrue(AZDecimal("-5") < AZDecimal("-3"))
+        XCTAssertTrue(AZDecimal("-5") < AZDecimal("0"))
+        XCTAssertTrue(AZDecimal("-5") < AZDecimal("5"))
+    }
+
+    func test_lessThan_differentIntegerDigits() {
+        XCTAssertTrue(AZDecimal("9") < AZDecimal("10"))
+        XCTAssertTrue(AZDecimal("-10") < AZDecimal("-9"))
+    }
+
+    func test_lessThan_highPrecision() {
+        // Double で表現できない桁数（16桁以上）でも正しく比較できる
+        let big = AZDecimal("12345678901234567.1")
+        let bigger = AZDecimal("12345678901234567.2")
+        XCTAssertTrue(big < bigger)
+        XCTAssertFalse(bigger < big)
+    }
+
+    func test_sorted() {
+        let values: [AZDecimal] = ["3", "-1", "0", "10", "-10", "1.5"]
+        let sorted = values.sorted()
+        XCTAssertEqual(sorted, ["-10", "-1", "0", "1.5", "3", "10"])
+    }
+}
+
+// MARK: - AZDecimal 便利プロパティ・演算子
+
+final class ConvenienceTests: XCTestCase {
+
+    func test_zero_isZero() {
+        XCTAssertTrue(AZDecimal.zero.isZero)
+        XCTAssertTrue(AZDecimal("0").isZero)
+        XCTAssertFalse(AZDecimal("1").isZero)
+    }
+
+    func test_isNegative() {
+        XCTAssertTrue(AZDecimal("-1").isNegative)
+        XCTAssertFalse(AZDecimal("0").isNegative)
+        XCTAssertFalse(AZDecimal("1").isNegative)
+        XCTAssertFalse(AZDecimal("-0").isNegative)  // エラー値は負でない
+    }
+
+    func test_abs() {
+        XCTAssertEqual(AZDecimal("-3.14").abs, AZDecimal("3.14"))
+        XCTAssertEqual(AZDecimal("3.14").abs, AZDecimal("3.14"))
+        XCTAssertEqual(AZDecimal("0").abs, AZDecimal("0"))
+    }
+
+    func test_compoundAssignment() {
+        var a = AZDecimal("10")
+        a += AZDecimal("3")
+        XCTAssertEqual(a, AZDecimal("13"))
+        a -= AZDecimal("5")
+        XCTAssertEqual(a, AZDecimal("8"))
+        a *= AZDecimal("2")
+        XCTAssertEqual(a, AZDecimal("16"))
+        a /= AZDecimal("4")
+        XCTAssertEqual(a, AZDecimal("4"))
+    }
+}
+
+// MARK: - AZDecimalConfig フルエントモディファイア
+
+final class FluentConfigTests: XCTestCase {
+
+    func test_digits() {
+        let config = AZDecimalConfig.default.digits(5)
+        XCTAssertEqual(config.decimalDigits, 5)
+    }
+
+    func test_rounding() {
+        let config = AZDecimalConfig.default.rounding(.truncate)
+        XCTAssertEqual(config.roundType, .truncate)
+    }
+
+    func test_trailingZero() {
+        let config = AZDecimalConfig.default.trailingZero(true)
+        XCTAssertTrue(config.trailZero)
+    }
+
+    func test_grouping() {
+        let config = AZDecimalConfig.default.grouping(.fours, separator: "_")
+        XCTAssertEqual(config.groupType, .fours)
+        XCTAssertEqual(config.groupSeparator, "_")
+    }
+
+    func test_decimalSep() {
+        let config = AZDecimalConfig.default.decimalSep(",")
+        XCTAssertEqual(config.decimalSeparator, ",")
+    }
+
+    func test_chaining() {
+        let config = AZDecimalConfig.default
+            .digits(2)
+            .rounding(.r54)
+            .trailingZero(true)
+            .grouping(.threes)
+            .decimalSep(".")
+        let result = AZDecimal("1234.5678").rounded(config: config).formatted(config: config)
+        XCTAssertEqual(result, "1,234.57")
+    }
+}
+
 // MARK: - 書式化
 
 final class FormatTests: XCTestCase {
@@ -193,6 +307,12 @@ final class FormatTests: XCTestCase {
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
                                      groupType: .indian, groupSeparator: ",")
         XCTAssertEqual(AZDecimal("123456789.01").formatted(config: config), "12,34,56,789.01")
+    }
+
+    func test_formatted_truncatesDecPartWhenTooLong() {
+        // Fix ②: formatted() は decimalDigits を超えた小数部を切り詰める
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false, groupType: .none)
+        XCTAssertEqual(AZDecimal("1.23456").formatted(config: config), "1.23")
     }
 
     func test_roundThenFormat() {

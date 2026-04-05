@@ -2,6 +2,7 @@
 // AZFormula トークン分割・RPN変換・評価テスト
 
 import XCTest
+import AZDecimal
 @testable import AZFormula
 
 // MARK: - tokenize
@@ -238,5 +239,60 @@ final class EvaluateTests: XCTestCase {
     func test_invalidCharacters_filtered() {
         // "1a+2$" の無効文字は除去されて "1+2" と同じ結果になる
         XCTAssertEqual(value("1a+2$"), value("1+2"))
+    }
+}
+
+// MARK: - evaluateDecimal
+
+final class EvaluateDecimalTests: XCTestCase {
+
+    func test_evaluateDecimal_returnsAZDecimal() {
+        guard case .success(let result) = AZFormula.evaluateDecimal("1+2") else {
+            XCTFail("Expected success"); return
+        }
+        XCTAssertEqual(result, AZDecimal("3"))
+    }
+
+    func test_evaluateDecimal_emptyReturnsZero() {
+        guard case .success(let result) = AZFormula.evaluateDecimal("") else {
+            XCTFail("Expected success"); return
+        }
+        XCTAssertTrue(result.isZero)
+    }
+
+    func test_evaluateDecimal_withConfig() {
+        let config = AZDecimalConfig.default.digits(2).rounding(.r54)
+        guard case .success(let result) = AZFormula.evaluateDecimal("1÷3", config: config) else {
+            XCTFail("Expected success"); return
+        }
+        XCTAssertEqual(result, AZDecimal("0.33"))
+    }
+
+    func test_evaluateDecimal_errorPropagates() {
+        guard case .failure(let e) = AZFormula.evaluateDecimal("√(0-1)") else {
+            XCTFail("Expected failure"); return
+        }
+        XCTAssertEqual(e, .negativeSqrt)
+    }
+
+    func test_evaluateDecimal_enablesFurtherArithmetic() {
+        // evaluateDecimal を使えば結果をさらに演算できる
+        guard case .success(let a) = AZFormula.evaluateDecimal("10+5"),
+              case .success(let b) = AZFormula.evaluateDecimal("2+1") else {
+            XCTFail("Expected success"); return
+        }
+        XCTAssertEqual(a * b, AZDecimal("45"))
+    }
+
+    func test_maxFormulaLength_isPublic() {
+        XCTAssertEqual(AZFormula.maxFormulaLength, 200)
+        // 200文字はギリギリ有効
+        let justRight = String(repeating: "1", count: 199) // 199桁の数値は1トークン
+        XCTAssertNotNil(try? AZFormula.evaluate(justRight).get())
+        // 201文字は tooLong
+        guard case .failure(let e) = AZFormula.evaluate(String(repeating: "1", count: 201)) else {
+            XCTFail("Expected tooLong"); return
+        }
+        XCTAssertEqual(e, .tooLong)
     }
 }
