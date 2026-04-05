@@ -5,6 +5,7 @@
 # Xcode
 *.xcodeproj/xcuserdata/
 *.xcworkspace/
+!AZCalc.xcworkspace/
 xcuserdata/
 DerivedData/
 *.pbxuser
