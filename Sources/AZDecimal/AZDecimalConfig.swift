@@ -52,8 +52,8 @@ public struct AZDecimalConfig: Sendable {
     public init(
         decimalDigits: Int = 3,
         decimalSeparator: String = ".",
-        roundType: RoundType = .truncate,
-        trailZero: Bool = true,
+        roundType: RoundType = .r54,
+        trailZero: Bool = false,
         groupType: GroupType = .threes,
         groupSeparator: String = ","
     ) {
@@ -65,6 +65,6 @@ public struct AZDecimalConfig: Sendable {
         self.groupSeparator = groupSeparator
     }
 
-    /// デフォルト設定（小数3桁・切り捨て・3桁区切り）
+    /// デフォルト設定（小数3桁・四捨五入・3桁区切り）
     public static let `default` = AZDecimalConfig()
 }
