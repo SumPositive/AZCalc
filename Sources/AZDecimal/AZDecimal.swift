@@ -23,6 +23,12 @@ public struct AZDecimal: Sendable {
     /// BCD 演算精度（整数部 + 小数部の合計桁数）
     public static let precision = 60
 
+    /// ゼロ値
+    public static let zero = AZDecimal("0")
+
+    /// 一値
+    public static let one = AZDecimal("1")
+
     private static let minusChar = "-"
     private static let dotChar   = "."
 
@@ -66,12 +72,30 @@ public struct AZDecimal: Sendable {
         return AZDecimal(String(cString: ans))
     }
 
+    // MARK: - プロパティ
+
+    /// ゼロかどうか
+    public var isZero: Bool { value == "0" || value == "-0" }
+
+    /// 負の値かどうか
+    public var isNegative: Bool { value.hasPrefix(AZDecimal.minusChar) && !isZero }
+
+    /// 絶対値
+    public var abs: AZDecimal {
+        isNegative ? AZDecimal(String(value.dropFirst())) : self
+    }
+
     // MARK: - 演算子
 
     public static func + (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.adding(rhs) }
     public static func - (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.subtracting(rhs) }
     public static func * (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.multiplied(by: rhs) }
     public static func / (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.divided(by: rhs) }
+
+    public static func += (lhs: inout AZDecimal, rhs: AZDecimal) { lhs = lhs + rhs }
+    public static func -= (lhs: inout AZDecimal, rhs: AZDecimal) { lhs = lhs - rhs }
+    public static func *= (lhs: inout AZDecimal, rhs: AZDecimal) { lhs = lhs * rhs }
+    public static func /= (lhs: inout AZDecimal, rhs: AZDecimal) { lhs = lhs / rhs }
 
     // MARK: - 丸め・書式化
 
