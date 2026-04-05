@@ -63,15 +63,15 @@ print(result)  // "3.46"
 
 ### Rounding modes
 
-| Mode | Name | Description |
-|---|---|---|
-| `.rup` | Round Up | Round away from zero |
-| `.rPlus` | Round toward +∞ | Round toward positive infinity |
-| `.r54` | Round Half Up | Round half up [JIS Z 8401 Rule B] |
-| `.r55` | Round Half Even | Round half to even — Banker's rounding [JIS Z 8401 Rule A] |
-| `.r65` | Round Half Down | 5 rounds down, 6+ rounds up |
-| `.rMinus` | Round toward −∞ | Round toward negative infinity |
-| `.truncate` | Truncate | No rounding — return raw value |
+| Mode | Name | Description | Standard |
+|---|---|---|---|
+| `.rup` | Round Up | Round away from zero | — |
+| `.rPlus` | Round toward +∞ | Round toward positive infinity | IEEE 754: roundTowardPositive |
+| `.r54` | Round Half Up | Round half up | JIS Z 8401 Rule B |
+| `.r55` | Round Half Even | Round half to even — Banker's rounding | JIS Z 8401 Rule A · IEEE 754: roundTiesToEven |
+| `.r65` | Round Half Down | 5 rounds down, 6+ rounds up | — |
+| `.rMinus` | Round toward −∞ | Round toward negative infinity | IEEE 754: roundTowardNegative |
+| `.truncate` | Truncate | No rounding — return raw value | IEEE 754: roundTowardZero |
 
 ### Formatting
 
