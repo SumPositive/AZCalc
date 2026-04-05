@@ -133,7 +133,7 @@ public struct AZDecimal: Sendable {
     // MARK: - 丸め・書式化
 
     /// 設定に従い丸めた値を返す。
-    public func rounded(config: AZDecimalConfig = .default) -> AZDecimal {
+    public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
         guard config.roundType != .truncate else { return self }
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
@@ -141,8 +141,8 @@ public struct AZDecimal: Sendable {
     }
 
     /// 設定に従い桁区切り・小数記号を付けた文字列を返す。
-    /// 丸めは行いません。先に `rounded(config:)` を呼んでください。
-    public func formatted(config: AZDecimalConfig = .default) -> String {
+    /// 丸めは行いません。先に `rounded(_:)` を呼んでください。
+    public func formatted(_ config: AZDecimalConfig = .default) -> String {
         var val = self.value
 
         // マイナス記号を分離

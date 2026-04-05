@@ -34,7 +34,7 @@ final class RoundingViewModel {
                 id: type,
                 modeName: name,
                 description: desc,
-                result: value.rounded(config: config).value
+                result: value.rounded(config).value
             )
         }
     }

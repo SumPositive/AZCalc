@@ -89,68 +89,68 @@ final class RoundingTests: XCTestCase {
         let value = AZDecimal("3.129")
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate)
         // truncate モードでは rounded() は self を返す（桁制限なし）
-        XCTAssertEqual(value.rounded(config: config), value)
+        XCTAssertEqual(value.rounded(config), value)
     }
 
     func test_rup_absoluteCeiling() {
         let value = AZDecimal("9.9001")
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .rup)), AZDecimal("9.901"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 2, roundType: .rup)), AZDecimal("9.91"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .rup)), AZDecimal("10"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 0, roundType: .rup)), AZDecimal("10"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 3, roundType: .rup)), AZDecimal("9.901"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 2, roundType: .rup)), AZDecimal("9.91"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 1, roundType: .rup)), AZDecimal("10"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 0, roundType: .rup)), AZDecimal("10"))
     }
 
     func test_rMinus_negativeDirection() {
         let neg = AZDecimal("-3.1001")
-        XCTAssertEqual(neg.rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .rMinus)), AZDecimal("-3.101"))
-        XCTAssertEqual(neg.rounded(config: AZDecimalConfig(decimalDigits: 2, roundType: .rMinus)), AZDecimal("-3.11"))
-        XCTAssertEqual(neg.rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .rMinus)), AZDecimal("-3.2"))
-        XCTAssertEqual(neg.rounded(config: AZDecimalConfig(decimalDigits: 0, roundType: .rMinus)), AZDecimal("-4"))
+        XCTAssertEqual(neg.rounded(AZDecimalConfig(decimalDigits: 3, roundType: .rMinus)), AZDecimal("-3.101"))
+        XCTAssertEqual(neg.rounded(AZDecimalConfig(decimalDigits: 2, roundType: .rMinus)), AZDecimal("-3.11"))
+        XCTAssertEqual(neg.rounded(AZDecimalConfig(decimalDigits: 1, roundType: .rMinus)), AZDecimal("-3.2"))
+        XCTAssertEqual(neg.rounded(AZDecimalConfig(decimalDigits: 0, roundType: .rMinus)), AZDecimal("-4"))
         // 正値は切り捨て同様
-        XCTAssertEqual(AZDecimal("3.1001").rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .rMinus)), AZDecimal("3.1"))
+        XCTAssertEqual(AZDecimal("3.1001").rounded(AZDecimalConfig(decimalDigits: 3, roundType: .rMinus)), AZDecimal("3.1"))
     }
 
     func test_rPlus_positiveDirection() {
         let pos = AZDecimal("3.1001")
-        XCTAssertEqual(pos.rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .rPlus)), AZDecimal("3.101"))
-        XCTAssertEqual(pos.rounded(config: AZDecimalConfig(decimalDigits: 2, roundType: .rPlus)), AZDecimal("3.11"))
-        XCTAssertEqual(pos.rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .rPlus)), AZDecimal("3.2"))
-        XCTAssertEqual(pos.rounded(config: AZDecimalConfig(decimalDigits: 0, roundType: .rPlus)), AZDecimal("4"))
+        XCTAssertEqual(pos.rounded(AZDecimalConfig(decimalDigits: 3, roundType: .rPlus)), AZDecimal("3.101"))
+        XCTAssertEqual(pos.rounded(AZDecimalConfig(decimalDigits: 2, roundType: .rPlus)), AZDecimal("3.11"))
+        XCTAssertEqual(pos.rounded(AZDecimalConfig(decimalDigits: 1, roundType: .rPlus)), AZDecimal("3.2"))
+        XCTAssertEqual(pos.rounded(AZDecimalConfig(decimalDigits: 0, roundType: .rPlus)), AZDecimal("4"))
         // 負値は切り捨て同様
-        XCTAssertEqual(AZDecimal("-3.1001").rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .rPlus)), AZDecimal("-3.1"))
+        XCTAssertEqual(AZDecimal("-3.1001").rounded(AZDecimalConfig(decimalDigits: 3, roundType: .rPlus)), AZDecimal("-3.1"))
     }
 
     func test_r54_roundHalfUp() {
         let value = AZDecimal("3.95345001")
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 6, roundType: .r54)), AZDecimal("3.95345"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 5, roundType: .r54)), AZDecimal("3.95345"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 4, roundType: .r54)), AZDecimal("3.9535"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .r54)), AZDecimal("3.953"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 2, roundType: .r54)), AZDecimal("3.95"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r54)), AZDecimal("4"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 0, roundType: .r54)), AZDecimal("4"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 6, roundType: .r54)), AZDecimal("3.95345"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 5, roundType: .r54)), AZDecimal("3.95345"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 4, roundType: .r54)), AZDecimal("3.9535"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 3, roundType: .r54)), AZDecimal("3.953"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 2, roundType: .r54)), AZDecimal("3.95"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r54)), AZDecimal("4"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 0, roundType: .r54)), AZDecimal("4"))
     }
 
     func test_r55_bankersRounding() {
         // 偶数位で「五」→ 切り捨て
-        XCTAssertEqual(AZDecimal("1.25").rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.2"))
+        XCTAssertEqual(AZDecimal("1.25").rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.2"))
         // 偶数位で「五超」→ 切り上げ
-        XCTAssertEqual(AZDecimal("1.250000001").rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.3"))
-        XCTAssertEqual(AZDecimal("1.26").rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.3"))
+        XCTAssertEqual(AZDecimal("1.250000001").rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.3"))
+        XCTAssertEqual(AZDecimal("1.26").rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.3"))
         // 奇数位で「五以上」→ 切り上げ
-        XCTAssertEqual(AZDecimal("1.349999").rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.3"))
-        XCTAssertEqual(AZDecimal("1.35").rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.4"))
+        XCTAssertEqual(AZDecimal("1.349999").rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.3"))
+        XCTAssertEqual(AZDecimal("1.35").rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.4"))
     }
 
     func test_r65_roundHalfDown() {
         let value = AZDecimal("3.9645601")
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 6, roundType: .r65)), AZDecimal("3.96456"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 5, roundType: .r65)), AZDecimal("3.96456"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 4, roundType: .r65)), AZDecimal("3.9646"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 3, roundType: .r65)), AZDecimal("3.964"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 2, roundType: .r65)), AZDecimal("3.96"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 1, roundType: .r65)), AZDecimal("4"))
-        XCTAssertEqual(value.rounded(config: AZDecimalConfig(decimalDigits: 0, roundType: .r65)), AZDecimal("4"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 6, roundType: .r65)), AZDecimal("3.96456"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 5, roundType: .r65)), AZDecimal("3.96456"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 4, roundType: .r65)), AZDecimal("3.9646"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 3, roundType: .r65)), AZDecimal("3.964"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 2, roundType: .r65)), AZDecimal("3.96"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r65)), AZDecimal("4"))
+        XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 0, roundType: .r65)), AZDecimal("4"))
     }
 }
 
@@ -263,7 +263,7 @@ final class FluentConfigTests: XCTestCase {
             .trailingZero(true)
             .grouping(.threes)
             .decimalSep(".")
-        let result = AZDecimal("1234.5678").rounded(config: config).formatted(config: config)
+        let result = AZDecimal("1234.5678").rounded(config).formatted(config)
         XCTAssertEqual(result, "1,234.57")
     }
 }
@@ -274,12 +274,12 @@ final class FormatTests: XCTestCase {
 
     func test_trailZero_true() {
         let config = AZDecimalConfig(decimalDigits: 3, roundType: .truncate, trailZero: true, groupType: .none)
-        XCTAssertEqual(AZDecimal("3.1").formatted(config: config), "3.100")
+        XCTAssertEqual(AZDecimal("3.1").formatted(config), "3.100")
     }
 
     func test_trailZero_false() {
         let config = AZDecimalConfig(decimalDigits: 3, roundType: .truncate, trailZero: false, groupType: .none)
-        XCTAssertEqual(AZDecimal("3.1").formatted(config: config), "3.1")
+        XCTAssertEqual(AZDecimal("3.1").formatted(config), "3.1")
     }
 
     func test_decimalSeparator_custom() {
@@ -287,32 +287,32 @@ final class FormatTests: XCTestCase {
         // ここでは小数1桁の値をそのまま渡してセパレータだけを確認する。
         let config = AZDecimalConfig(decimalDigits: 1, decimalSeparator: ":", roundType: .truncate,
                                      trailZero: false, groupType: .none)
-        XCTAssertEqual(AZDecimal("100.1").formatted(config: config), "100:1")
+        XCTAssertEqual(AZDecimal("100.1").formatted(config), "100:1")
     }
 
     func test_groupSeparator_threes() {
         // 小数2桁の値を渡して桁区切りのみ確認
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
                                      groupType: .threes, groupSeparator: ",")
-        XCTAssertEqual(AZDecimal("123456789.01").formatted(config: config), "123,456,789.01")
+        XCTAssertEqual(AZDecimal("123456789.01").formatted(config), "123,456,789.01")
     }
 
     func test_groupSeparator_fours() {
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
                                      groupType: .fours, groupSeparator: ";")
-        XCTAssertEqual(AZDecimal("123456789.01").formatted(config: config), "1;2345;6789.01")
+        XCTAssertEqual(AZDecimal("123456789.01").formatted(config), "1;2345;6789.01")
     }
 
     func test_groupSeparator_indian() {
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
                                      groupType: .indian, groupSeparator: ",")
-        XCTAssertEqual(AZDecimal("123456789.01").formatted(config: config), "12,34,56,789.01")
+        XCTAssertEqual(AZDecimal("123456789.01").formatted(config), "12,34,56,789.01")
     }
 
     func test_formatted_truncatesDecPartWhenTooLong() {
         // Fix ②: formatted() は decimalDigits を超えた小数部を切り詰める
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false, groupType: .none)
-        XCTAssertEqual(AZDecimal("1.23456").formatted(config: config), "1.23")
+        XCTAssertEqual(AZDecimal("1.23456").formatted(config), "1.23")
     }
 
     func test_roundThenFormat() {
@@ -320,23 +320,23 @@ final class FormatTests: XCTestCase {
 
         let base = AZDecimalConfig(decimalDigits: 5, roundType: .r54, trailZero: true,
                                    groupType: .threes, groupSeparator: ",")
-        XCTAssertEqual(value.rounded(config: base).formatted(config: base), "123,456,789.04500")
+        XCTAssertEqual(value.rounded(base).formatted(base), "123,456,789.04500")
 
         let d3 = AZDecimalConfig(decimalDigits: 3, roundType: .r54, trailZero: true,
                                  groupType: .threes, groupSeparator: ",")
-        XCTAssertEqual(value.rounded(config: d3).formatted(config: d3), "123,456,789.045")
+        XCTAssertEqual(value.rounded(d3).formatted(d3), "123,456,789.045")
 
         let d2 = AZDecimalConfig(decimalDigits: 2, roundType: .r54, trailZero: true,
                                  groupType: .threes, groupSeparator: ",")
-        XCTAssertEqual(value.rounded(config: d2).formatted(config: d2), "123,456,789.05")
+        XCTAssertEqual(value.rounded(d2).formatted(d2), "123,456,789.05")
 
         let d1 = AZDecimalConfig(decimalDigits: 1, roundType: .r54, trailZero: true,
                                  groupType: .threes, groupSeparator: ",")
-        XCTAssertEqual(value.rounded(config: d1).formatted(config: d1), "123,456,789.0")
+        XCTAssertEqual(value.rounded(d1).formatted(d1), "123,456,789.0")
 
         let d0 = AZDecimalConfig(decimalDigits: 0, roundType: .r54, trailZero: true,
                                  groupType: .threes, groupSeparator: ",")
-        XCTAssertEqual(value.rounded(config: d0).formatted(config: d0), "123,456,789")
+        XCTAssertEqual(value.rounded(d0).formatted(d0), "123,456,789")
     }
 }
 

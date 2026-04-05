@@ -96,7 +96,7 @@ public enum AZFormula {
 
         switch evalRPN(rpn) {
         case .success(let decimal):
-            return .success(decimal.rounded(config: config).value)
+            return .success(decimal.rounded(config).value)
         case .failure(let error):
             return .failure(error)
         }
@@ -133,7 +133,7 @@ public enum AZFormula {
 
         switch evalRPN(rpn) {
         case .success(let decimal):
-            return .success(decimal.rounded(config: config))
+            return .success(decimal.rounded(config))
         case .failure(let error):
             return .failure(error)
         }

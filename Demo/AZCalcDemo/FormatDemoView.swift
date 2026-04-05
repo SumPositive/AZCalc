@@ -24,7 +24,7 @@ struct FormatDemoView: View {
     }
 
     private var formattedResult: String {
-        AZDecimal(inputText).rounded(config: config).formatted(config: config)
+        AZDecimal(inputText).rounded(config).formatted(config)
     }
 
     var body: some View {

@@ -57,7 +57,7 @@ a /= "4"   // 4
 
 ```swift
 let config = AZDecimalConfig(decimalDigits: 2, roundType: .r54)
-let result = AZDecimal("3.456").rounded(config: config)
+let result = AZDecimal("3.456").rounded(config)
 print(result)  // "3.46"
 ```
 
@@ -75,8 +75,8 @@ print(result)  // "3.46"
 
 ### Formatting
 
-`formatted(config:)` applies grouping separators, decimal separator, and trailing-zero padding.
-It also truncates the decimal part to `decimalDigits`. Call `rounded(config:)` first for precise rounding.
+`formatted(_:)` applies grouping separators, decimal separator, and trailing-zero padding.
+It also truncates the decimal part to `decimalDigits`. Call `rounded(_:)` first for precise rounding.
 
 ```swift
 let config = AZDecimalConfig.default
@@ -86,7 +86,7 @@ let config = AZDecimalConfig.default
     .grouping(.threes)
 
 let value = AZDecimal("1234567.045")
-print(value.rounded(config: config).formatted(config: config))
+print(value.rounded(config).formatted(config))
 // "1,234,567.05"
 ```
 
