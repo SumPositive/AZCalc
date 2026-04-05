@@ -57,7 +57,7 @@ private let formulaLength = 200
 /// let result = AZFormula.evaluate("1 ÷ 3", config: config)
 /// // → .success("0.33")
 /// ```
-public final class AZFormula {
+public enum AZFormula {
 
     // MARK: - 公開 API
 
