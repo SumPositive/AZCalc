@@ -39,7 +39,7 @@ private let opPtR  = ")"
 private let opDot  = "."
 
 private let allOperators = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_]
-private let formulaLength = 200
+private let formulaLength = AZFormula.maxFormulaLength
 
 // MARK: - AZFormula
 
@@ -58,6 +58,9 @@ private let formulaLength = 200
 /// // → .success("0.33")
 /// ```
 public enum AZFormula {
+
+    /// 評価可能な数式の最大文字数。これを超えると `.tooLong` エラーを返します。
+    public static let maxFormulaLength = 200
 
     // MARK: - 公開 API
 
