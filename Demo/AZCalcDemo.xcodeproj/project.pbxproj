@@ -18,6 +18,7 @@
 		BF0000000000000000000009 /* AZFormula in Frameworks */ = {isa = PBXBuildFile; productRef = DEP000000000000000000002 /* AZFormula */; };
 		BF000000000000000000000A /* FormulaViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FIL000000000000000000008 /* FormulaViewModelTests.swift */; };
 		BF000000000000000000000B /* RoundingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FIL000000000000000000009 /* RoundingViewModelTests.swift */; };
+		BF00000000000000000000C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = FIL00000000000000000000A /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		FIL000000000000000000007 /* FormatDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatDemoView.swift; sourceTree = "<group>"; };
 		FIL000000000000000000008 /* FormulaViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormulaViewModelTests.swift; sourceTree = "<group>"; };
 		FIL000000000000000000009 /* RoundingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingViewModelTests.swift; sourceTree = "<group>"; };
+		FIL00000000000000000000A /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		PRD000000000000000000001 /* AZCalcDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AZCalcDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		PRD000000000000000000002 /* AZCalcDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AZCalcDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -92,6 +94,7 @@
 				FIL000000000000000000005 /* RoundingViewModel.swift */,
 				FIL000000000000000000006 /* RoundingComparisonView.swift */,
 				FIL000000000000000000007 /* FormatDemoView.swift */,
+				FIL00000000000000000000A /* Localizable.xcstrings */,
 			);
 			path = AZCalcDemo;
 			sourceTree = "<group>";
@@ -167,9 +170,10 @@
 			};
 			buildConfigurationList = CFG000000000000000000004 /* Build configuration list for PBXProject "AZCalcDemo" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				ja,
 				en,
 				Base,
 			);
@@ -192,6 +196,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF00000000000000000000C /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

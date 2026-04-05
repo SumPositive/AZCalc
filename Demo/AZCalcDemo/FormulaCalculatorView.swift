@@ -76,7 +76,7 @@ struct FormulaCalculatorView: View {
                             .font(.body.monospacedDigit())
                             .foregroundStyle(.primary)
                         Spacer()
-                        Text(ex.description)
+                        Text(LocalizedStringKey(ex.description))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

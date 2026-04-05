@@ -7,11 +7,11 @@ struct ContentView: View {
     var body: some View {
         TabView {
             FormulaCalculatorView()
-                .tabItem { Label("Calculator", systemImage: "function") }
+                .tabItem { Label("計算機", systemImage: "function") }
             RoundingComparisonView()
-                .tabItem { Label("Rounding", systemImage: "plusminus") }
+                .tabItem { Label("丸め", systemImage: "plusminus") }
             FormatDemoView()
-                .tabItem { Label("Format", systemImage: "textformat.123") }
+                .tabItem { Label("書式", systemImage: "textformat.123") }
         }
     }
 }
@@ -23,7 +23,7 @@ extension AZDecimalConfig.RoundType {
         .rup, .rPlus, .r54, .r55, .r65, .rMinus, .truncate
     ]
 
-    var demoLabel: String {
+    var demoLabel: LocalizedStringKey {
         switch self {
         case .rup:      "切り上げ (rup)"
         case .rPlus:    "正方向 (rPlus)"

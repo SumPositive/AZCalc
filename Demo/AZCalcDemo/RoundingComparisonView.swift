@@ -21,9 +21,9 @@ struct RoundingComparisonView: View {
                     ForEach(viewModel.rows) { row in
                         HStack(alignment: .top, spacing: 12) {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(row.modeName)
+                                Text(LocalizedStringKey(row.modeName))
                                     .font(.subheadline.bold())
-                                Text(row.description)
+                                Text(LocalizedStringKey(row.description))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }

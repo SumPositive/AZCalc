@@ -1,0 +1,276 @@
+{
+  "sourceLanguage" : "ja",
+  "strings" : {
+    "計算機" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Calculator" } }
+      }
+    },
+    "丸め" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rounding" } }
+      }
+    },
+    "書式" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Format" } }
+      }
+    },
+    "切り上げ (rup)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Up (rup)" } }
+      }
+    },
+    "正方向 (rPlus)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toward +∞ (rPlus)" } }
+      }
+    },
+    "四捨五入 (r54)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Half Up (r54)" } }
+      }
+    },
+    "五捨五超入 (r55)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Half Even (r55)" } }
+      }
+    },
+    "五捨六入 (r65)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Half Down (r65)" } }
+      }
+    },
+    "負方向 (rMinus)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toward −∞ (rMinus)" } }
+      }
+    },
+    "切り捨て (truncate)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Truncate" } }
+      }
+    },
+    "式" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Expression" } }
+      }
+    },
+    "例: 100+5%" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. 100+5%" } }
+      }
+    },
+    "設定" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } }
+      }
+    },
+    "小数桁数: %lld" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Decimal Digits: %lld" } }
+      }
+    },
+    "丸めタイプ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rounding Mode" } }
+      }
+    },
+    "使用例（タップで入力）" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Examples (tap to fill)" } }
+      }
+    },
+    "5%増し" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add 5%" } }
+      }
+    },
+    "5%引き" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Subtract 5%" } }
+      }
+    },
+    "100の5%" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "5% of 100" } }
+      }
+    },
+    "5%での除算" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Divide by 5%" } }
+      }
+    },
+    "割り切れない" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Non-terminating" } }
+      }
+    },
+    "平方根" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Square root" } }
+      }
+    },
+    "立方根" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cube root" } }
+      }
+    },
+    "括弧" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Parentheses" } }
+      }
+    },
+    "符号反転" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Negate" } }
+      }
+    },
+    "複合式" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Complex expression" } }
+      }
+    },
+    "入力" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Input" } }
+      }
+    },
+    "数値" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Number" } }
+      }
+    },
+    "丸めモード比較" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rounding Mode Comparison" } }
+      }
+    },
+    "切り捨て（truncate）は桁制限なしで生の値を返します。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Truncate returns the raw value without digit limit." } }
+      }
+    },
+    "末尾ゼロ補充" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pad Trailing Zeros" } }
+      }
+    },
+    "桁区切り" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Grouping" } }
+      }
+    },
+    "区切りタイプ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Group Type" } }
+      }
+    },
+    "なし" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "None" } }
+      }
+    },
+    "3桁 (1,234,567)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Thousands (1,234,567)" } }
+      }
+    },
+    "4桁 (1234,5678)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Fours (1234,5678)" } }
+      }
+    },
+    "インド式 (12,34,567)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Indian (12,34,567)" } }
+      }
+    },
+    "桁区切り記号" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Group Separator" } }
+      }
+    },
+    "小数点記号" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Decimal Separator" } }
+      }
+    },
+    "結果" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Result" } }
+      }
+    },
+    "切り上げ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Up" } }
+      }
+    },
+    "絶対値方向に丸める" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Away from zero" } }
+      }
+    },
+    "正方向" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toward +∞" } }
+      }
+    },
+    "正の無限大方向に丸める" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toward positive infinity" } }
+      }
+    },
+    "四捨五入" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Half Up" } }
+      }
+    },
+    "JIS Z 8401 規則B" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "JIS Z 8401 Rule B" } }
+      }
+    },
+    "五捨五超入" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Half Even" } }
+      }
+    },
+    "JIS Z 8401 規則A（偶数丸め）" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "JIS Z 8401 Rule A (Banker's rounding)" } }
+      }
+    },
+    "五捨六入" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round Half Down" } }
+      }
+    },
+    "5は切り捨て・6以上は切り上げ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "5 rounds down, 6+ rounds up" } }
+      }
+    },
+    "負方向" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toward −∞" } }
+      }
+    },
+    "負の無限大方向に丸める" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toward negative infinity" } }
+      }
+    },
+    "切り捨て" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Truncate" } }
+      }
+    },
+    "丸めなし（生の値を返す）" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No rounding (returns raw value)" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
