@@ -61,7 +61,8 @@ private let allowedFormulaChars = CharacterSet(charactersIn: "0123456789.-+*/×�
 public enum AZFormula {
 
     /// 評価可能な数式の最大文字数。これを超えると `.tooLong` エラーを返します。
-    public static let maxFormulaLength = 200
+    /// アプリ起動時に変更できます（例: `AZFormula.maxFormulaLength = 500`）。
+    public static var maxFormulaLength = 200
 
     // MARK: - 公開 API
 
