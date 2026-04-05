@@ -65,13 +65,13 @@ print(result)  // "3.46"
 
 | Mode | Name | Description |
 |---|---|---|
-| `.rup` | 切り上げ | Round away from zero |
-| `.rPlus` | 正方向丸め | Round toward +∞ |
-| `.r54` | 四捨五入 | Round half up [JIS Z 8401 Rule B] |
-| `.r55` | 五捨五超入 | Round half to even [JIS Z 8401 Rule A] |
-| `.r65` | 五捨六入 | Round half down |
-| `.rMinus` | 負方向丸め | Round toward −∞ |
-| `.truncate` | 切り捨て | No rounding — return raw value |
+| `.rup` | Round Up | Round away from zero |
+| `.rPlus` | Round toward +∞ | Round toward positive infinity |
+| `.r54` | Round Half Up | Round half up [JIS Z 8401 Rule B] |
+| `.r55` | Round Half Even | Round half to even — Banker's rounding [JIS Z 8401 Rule A] |
+| `.r65` | Round Half Down | 5 rounds down, 6+ rounds up |
+| `.rMinus` | Round toward −∞ | Round toward negative infinity |
+| `.truncate` | Truncate | No rounding — return raw value |
 
 ### Formatting
 
