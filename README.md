@@ -33,13 +33,28 @@ print(a * b)   // "2.25016"
 print(a / b)   // "0.537815..."
 ```
 
+### Convenience API
+
+```swift
+AZDecimal.zero          // AZDecimal("0")
+AZDecimal.one           // AZDecimal("1")
+
+let x: AZDecimal = "-3.14"
+x.isZero                // false
+x.isNegative            // true
+x.abs                   // AZDecimal("3.14")
+
+var a: AZDecimal = "10"
+a += "3"   // 13
+a -= "5"   // 8
+a *= "2"   // 16
+a /= "4"   // 4
+```
+
 ### Rounding
 
 ```swift
-var config = AZDecimalConfig()
-config.decimalDigits = 2
-config.roundType = .r54   // 四捨五入
-
+let config = AZDecimalConfig(decimalDigits: 2, roundType: .r54)
 let result = AZDecimal("3.456").rounded(config: config)
 print(result)  // "3.46"
 ```
@@ -58,19 +73,42 @@ print(result)  // "3.46"
 
 ### Formatting
 
+`formatted(config:)` applies grouping separators, decimal separator, and trailing-zero padding.
+It also truncates the decimal part to `decimalDigits`. Call `rounded(config:)` first for precise rounding.
+
 ```swift
-var config = AZDecimalConfig()
-config.decimalDigits  = 2
-config.roundType      = .r54
-config.trailZero      = true       // pad to 2 decimal places
-config.groupType      = .threes    // 3-digit grouping
-config.groupSeparator = ","
-config.decimalSeparator = "."
+let config = AZDecimalConfig.default
+    .digits(2)
+    .rounding(.r54)
+    .trailingZero(true)
+    .grouping(.threes)
 
 let value = AZDecimal("1234567.045")
 print(value.rounded(config: config).formatted(config: config))
 // "1,234,567.05"
 ```
+
+### Fluent configuration
+
+`AZDecimalConfig` supports method chaining. The default config uses `.r54`, 3 decimal digits, 3-digit grouping, no trailing zeros.
+
+```swift
+// verbose style
+var config = AZDecimalConfig()
+config.decimalDigits = 2
+config.roundType = .r54
+
+// fluent style (equivalent)
+let config = AZDecimalConfig.default.digits(2).rounding(.r54)
+```
+
+| Method | Description |
+|---|---|
+| `.digits(_ n: Int)` | Set decimal digits |
+| `.rounding(_ type: RoundType)` | Set rounding mode |
+| `.trailingZero(_ enabled: Bool)` | Pad / strip trailing zeros |
+| `.grouping(_ type: GroupType, separator: String)` | Set digit grouping |
+| `.decimalSep(_ separator: String)` | Set decimal separator |
 
 ### Grouping types
 
@@ -96,7 +134,7 @@ let result = AZFormula.evaluate("(100 + 5%) × 1.08")
 // → .success("113.4")
 
 switch AZFormula.evaluate("1 ÷ 3") {
-case .success(let value): print(value)  // "0.333333..."
+case .success(let value): print(value)  // "0.333"  (default: .r54, 3 digits)
 case .failure(let error): print(error)
 }
 ```
@@ -104,12 +142,21 @@ case .failure(let error): print(error)
 ### With rounding config
 
 ```swift
-var config = AZDecimalConfig()
-config.decimalDigits = 2
-config.roundType = .r54
+let config = AZDecimalConfig.default.digits(2).rounding(.r54)
 
 let result = AZFormula.evaluate("1 ÷ 3", config: config)
 // → .success("0.33")
+```
+
+### evaluateDecimal — returns AZDecimal
+
+When you need to perform further arithmetic on the result:
+
+```swift
+if case .success(let a) = AZFormula.evaluateDecimal("10+5"),
+   case .success(let b) = AZFormula.evaluateDecimal("2+1") {
+    print(a * b)  // AZDecimal("45")
+}
 ```
 
 ### Supported operators
@@ -136,7 +183,7 @@ let result = AZFormula.evaluate("1 ÷ 3", config: config)
 
 ```swift
 public enum AZFormulaError: Error {
-    case tooLong          // formula exceeds 200 characters
+    case tooLong          // formula exceeds AZFormula.maxFormulaLength (200) characters
     case negativeSqrt     // √ applied to a negative number
     case invalidExpression
 }
@@ -202,13 +249,13 @@ AZCalc/
 │   ├── AZDecimal/           ← Swift API
 │   └── AZFormula/           ← Formula engine
 ├── Tests/
-│   ├── AZDecimalTests/      ← 39 tests
-│   └── AZFormulaTests/      ← 28 tests
+│   ├── AZDecimalTests/      ← 43 tests (arithmetic, rounding, comparable, convenience, format)
+│   └── AZFormulaTests/      ← 34 tests (tokenize, RPN, evaluate, evaluateDecimal)
 └── Demo/
     └── AZCalcDemo.xcodeproj ← SwiftUI demo app (iOS 17+)
 ```
 
-Open `Demo/AZCalcDemo.xcodeproj` in Xcode to run the interactive demo.
+Open `AZCalc.xcworkspace` in Xcode to run both package tests and demo app tests together.
 
 ## License
 
