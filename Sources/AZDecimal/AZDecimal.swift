@@ -1,0 +1,180 @@
+// AZDecimal.swift
+// 符号付き BCD 十進演算
+//
+// Originally created by MSPO/azukid on 1998/09/15 (C/C++)
+// Converted to Swift6 by sumpo/azukid on 2025/07/10
+// Refactored as AZDecimal Swift Package by sumpo/azukid on 2026/04/05
+
+import Foundation
+import AZDecimalC
+
+/// 符号付き BCD（Binary Coded Decimal）十進演算型。
+///
+/// 浮動小数点誤差のない高精度計算を提供します。
+/// 整数部・小数部それぞれ最大 30 桁（合計 60 桁）の精度を持ちます。
+///
+/// ```swift
+/// let a: AZDecimal = "1.23"
+/// let b: AZDecimal = "4.56"
+/// print(a + b)  // "5.79"
+/// ```
+public struct AZDecimal: Sendable {
+
+    /// BCD 演算精度（整数部 + 小数部の合計桁数）
+    public static let precision = 60
+
+    private static let minusChar = "-"
+    private static let dotChar   = "."
+
+    private let bufSize = precision + 4
+
+    /// 内部文字列（`"-"`, `"."`, `"0"–"9"` のみで構成）
+    public private(set) var value: String
+
+    // MARK: - Init
+
+    /// 文字列から初期化。許可外の文字は除去します。
+    public init(_ num: String) {
+        let allowed = CharacterSet(charactersIn: "0123456789.-")
+        let filtered = num.filter { $0.unicodeScalars.allSatisfy { allowed.contains($0) } }
+        self.value = filtered.isEmpty ? "0" : filtered
+    }
+
+    // MARK: - 四則演算メソッド
+
+    public func adding(_ other: AZDecimal) -> AZDecimal {
+        var ans = [CChar](repeating: 0, count: bufSize)
+        sbcd_add(&ans, value, other.value)
+        return AZDecimal(String(cString: ans))
+    }
+
+    public func subtracting(_ other: AZDecimal) -> AZDecimal {
+        var ans = [CChar](repeating: 0, count: bufSize)
+        sbcd_sub(&ans, value, other.value)
+        return AZDecimal(String(cString: ans))
+    }
+
+    public func multiplied(by other: AZDecimal) -> AZDecimal {
+        var ans = [CChar](repeating: 0, count: bufSize)
+        sbcd_mul(&ans, value, other.value)
+        return AZDecimal(String(cString: ans))
+    }
+
+    public func divided(by other: AZDecimal) -> AZDecimal {
+        var ans = [CChar](repeating: 0, count: bufSize)
+        sbcd_div(&ans, value, other.value)
+        return AZDecimal(String(cString: ans))
+    }
+
+    // MARK: - 演算子
+
+    public static func + (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.adding(rhs) }
+    public static func - (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.subtracting(rhs) }
+    public static func * (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.multiplied(by: rhs) }
+    public static func / (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.divided(by: rhs) }
+
+    // MARK: - 丸め・書式化
+
+    /// 設定に従い丸めた値を返す。
+    public func rounded(config: AZDecimalConfig = .default) -> AZDecimal {
+        guard config.roundType != .truncate else { return self }
+        var ans = [CChar](repeating: 0, count: bufSize)
+        sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
+        return AZDecimal(String(cString: ans))
+    }
+
+    /// 設定に従い桁区切り・小数記号を付けた文字列を返す。
+    /// 丸めは行いません。先に `rounded(config:)` を呼んでください。
+    public func formatted(config: AZDecimalConfig = .default) -> String {
+        var val = self.value
+
+        // マイナス記号を分離
+        var minus = false
+        if val.hasPrefix(AZDecimal.minusChar) {
+            minus = true
+            val.removeFirst()
+        }
+
+        // 整数部・小数部に分割
+        let parts = val.split(separator: Character(AZDecimal.dotChar), omittingEmptySubsequences: false)
+        var intPart = parts.count > 0 ? String(parts[0]) : "0"
+        var decPart = parts.count > 1 ? String(parts[1]) : ""
+
+        // 桁区切り
+        let chars = Array(intPart)
+        switch config.groupType {
+        case .threes, .fours:
+            let size = config.groupType == .threes ? 3 : 4
+            let rev = chars.reversed()
+            var result = ""
+            for (i, c) in rev.enumerated() {
+                if i > 0 && i % size == 0 { result.append(contentsOf: config.groupSeparator) }
+                result.append(c)
+            }
+            intPart = String(result.reversed())
+        case .indian:
+            let last3 = chars.suffix(3)
+            if chars.count > 3 {
+                let rev = chars.dropLast(3).reversed()
+                var result = ""
+                for (i, c) in rev.enumerated() {
+                    if i > 0 && i % 2 == 0 { result.append(contentsOf: config.groupSeparator) }
+                    result.append(c)
+                }
+                intPart = String(result.reversed()) + config.groupSeparator + String(last3)
+            } else {
+                intPart = String(last3)
+            }
+        case .none:
+            break
+        }
+
+        // 末尾ゼロ
+        if config.trailZero {
+            if decPart.count < config.decimalDigits {
+                decPart = decPart.padding(toLength: config.decimalDigits, withPad: "0", startingAt: 0)
+            }
+        } else if !decPart.isEmpty {
+            decPart = decPart.replacingOccurrences(of: "0+$", with: "", options: .regularExpression)
+        }
+
+        // 組み立て
+        var result = intPart
+        if !decPart.isEmpty {
+            result += config.decimalSeparator + decPart
+        }
+        return minus ? AZDecimal.minusChar + result : result
+    }
+}
+
+// MARK: - プロトコル適合
+
+extension AZDecimal: Equatable {
+    public static func == (lhs: AZDecimal, rhs: AZDecimal) -> Bool {
+        lhs.value == rhs.value
+    }
+}
+
+extension AZDecimal: Comparable {
+    public static func < (lhs: AZDecimal, rhs: AZDecimal) -> Bool {
+        let ld = Double(lhs.value) ?? 0
+        let rd = Double(rhs.value) ?? 0
+        return ld < rd
+    }
+}
+
+extension AZDecimal: ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) { self.init(value) }
+}
+
+extension AZDecimal: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: Int) { self.init(String(value)) }
+}
+
+extension AZDecimal: ExpressibleByFloatLiteral {
+    public init(floatLiteral value: Double) { self.init(String(value)) }
+}
+
+extension AZDecimal: CustomStringConvertible {
+    public var description: String { value }
+}
