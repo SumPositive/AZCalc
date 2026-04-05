@@ -38,8 +38,9 @@ private let opPtL  = "("
 private let opPtR  = ")"
 private let opDot  = "."
 
-private let allOperators = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_]
+private let allOperators  = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_]
 private let formulaLength = AZFormula.maxFormulaLength
+private let allowedFormulaChars = CharacterSet(charactersIn: "0123456789.-+*/×÷√∛()%割分厘")
 
 // MARK: - AZFormula
 
@@ -82,10 +83,8 @@ public enum AZFormula {
         }
 
         // 許可文字だけにフィルタ
-        let allowed = CharacterSet(charactersIn:
-            "0123456789.-+*/×÷√∛()%割分厘")
         let filtered = formula.filter {
-            $0.unicodeScalars.allSatisfy { allowed.contains($0) }
+            $0.unicodeScalars.allSatisfy { allowedFormulaChars.contains($0) }
         }
 
         // 1文字（単体の数値）はそのまま返す
@@ -122,10 +121,8 @@ public enum AZFormula {
             return .failure(.tooLong)
         }
 
-        let allowed = CharacterSet(charactersIn:
-            "0123456789.-+*/×÷√∛()%割分厘")
         let filtered = formula.filter {
-            $0.unicodeScalars.allSatisfy { allowed.contains($0) }
+            $0.unicodeScalars.allSatisfy { allowedFormulaChars.contains($0) }
         }
 
         if filtered.count <= 1 { return .success(AZDecimal(filtered)) }

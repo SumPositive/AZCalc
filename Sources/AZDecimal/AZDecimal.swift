@@ -29,8 +29,9 @@ public struct AZDecimal: Sendable {
     /// 一値
     public static let one = AZDecimal("1")
 
-    private static let minusChar = "-"
-    private static let dotChar   = "."
+    private static let minusChar   = "-"
+    private static let dotChar     = "."
+    private static let allowedChars = CharacterSet(charactersIn: "0123456789.-")
 
     private let bufSize = precision + 4
 
@@ -41,8 +42,7 @@ public struct AZDecimal: Sendable {
 
     /// 文字列から初期化。許可外の文字は除去します。
     public init(_ num: String) {
-        let allowed = CharacterSet(charactersIn: "0123456789.-")
-        let filtered = num.filter { $0.unicodeScalars.allSatisfy { allowed.contains($0) } }
+        let filtered = num.filter { $0.unicodeScalars.allSatisfy { AZDecimal.allowedChars.contains($0) } }
         self.value = filtered.isEmpty ? "0" : filtered
     }
 
