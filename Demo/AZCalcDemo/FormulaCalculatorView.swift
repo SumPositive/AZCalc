@@ -24,12 +24,14 @@ struct FormulaCalculatorView: View {
     // MARK: - 結果パネル
 
     private var resultPanel: some View {
-        VStack(alignment: .trailing, spacing: 6) {
-            Text(viewModel.formula.isEmpty ? " " : viewModel.formula)
-                .font(.subheadline.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+        VStack(alignment: .trailing, spacing: 4) {
+            if !viewModel.formula.isEmpty {
+                Text(viewModel.formula)
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
             Text(viewModel.displayResult)
                 .font(.system(size: 44, weight: .bold, design: .monospaced))
                 .foregroundStyle(viewModel.hasError ? Color.red : Color.primary)
@@ -38,7 +40,7 @@ struct FormulaCalculatorView: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(.horizontal)
-        .padding(.vertical, 12)
+        .padding(.vertical, 8)
         .background(Color(.secondarySystemBackground))
     }
 
