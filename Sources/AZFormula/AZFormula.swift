@@ -99,6 +99,45 @@ public enum AZFormula {
         }
     }
 
+    /// 数式文字列を評価して `AZDecimal` を返す。
+    ///
+    /// `evaluate(_:config:)` と同じ処理を行いますが、文字列ではなく `AZDecimal` を返します。
+    /// フォーマットや追加の演算が必要な場合に使用してください。
+    ///
+    /// - Parameters:
+    ///   - formula: 評価する数式
+    ///   - config: 丸め設定（省略時は `AZDecimalConfig.default`）
+    /// - Returns: 成功時は丸め済み `AZDecimal`、失敗時はエラー
+    public static func evaluateDecimal(
+        _ formula: String,
+        config: AZDecimalConfig = .default
+    ) -> Result<AZDecimal, AZFormulaError> {
+        guard !formula.isEmpty else {
+            return .success(.zero)
+        }
+        guard formula.count < formulaLength else {
+            return .failure(.tooLong)
+        }
+
+        let allowed = CharacterSet(charactersIn:
+            "0123456789.-+*/×÷√∛()%割分厘")
+        let filtered = formula.filter {
+            $0.unicodeScalars.allSatisfy { allowed.contains($0) }
+        }
+
+        if filtered.count <= 1 { return .success(AZDecimal(filtered)) }
+
+        let tokens = tokenize(filtered)
+        let rpn    = toRPN(tokens)
+
+        switch evalRPN(rpn) {
+        case .success(let decimal):
+            return .success(decimal.rounded(config: config))
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
     // MARK: - 公開サブステップ（テスト・拡張用）
 
     /// 数式文字列をトークン列に分割する。
