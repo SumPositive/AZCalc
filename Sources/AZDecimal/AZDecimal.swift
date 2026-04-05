@@ -129,6 +129,11 @@ public struct AZDecimal: Sendable {
             break
         }
 
+        // 小数部を decimalDigits に切り詰め
+        if decPart.count > config.decimalDigits {
+            decPart = String(decPart.prefix(config.decimalDigits))
+        }
+
         // 末尾ゼロ
         if config.trailZero {
             if decPart.count < config.decimalDigits {
