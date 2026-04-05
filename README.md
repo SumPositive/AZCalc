@@ -166,8 +166,8 @@ if case .success(let a) = AZFormula.evaluateDecimal("10+5"),
 | Operator | Description |
 |---|---|
 | `+` `-` `×` `÷` | Basic arithmetic (`*` `/` also accepted) |
-| `√` | Square root |
-| `∛` | Cube root |
+| `√` | Square root — BCD Newton-Raphson, full precision |
+| `∛` | Cube root — BCD Newton-Raphson, full precision |
 | `( )` | Parentheses |
 | `%` | Percent — context-sensitive (see below) |
 | `割` `分` `厘` | Japanese percent notation |
@@ -251,8 +251,8 @@ AZCalc/
 │   ├── AZDecimal/           ← Swift API
 │   └── AZFormula/           ← Formula engine
 ├── Tests/
-│   ├── AZDecimalTests/      ← 43 tests (arithmetic, rounding, comparable, convenience, format)
-│   └── AZFormulaTests/      ← 34 tests (tokenize, RPN, evaluate, evaluateDecimal)
+│   ├── AZDecimalTests/      ← 51 tests (arithmetic, rounding, comparable, convenience, format, root)
+│   └── AZFormulaTests/      ← 46 tests (tokenize, RPN, evaluate, evaluateDecimal)
 └── Demo/
     └── AZCalcDemo.xcodeproj ← SwiftUI demo app (iOS 17+)
 ```
