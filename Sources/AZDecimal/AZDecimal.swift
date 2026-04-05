@@ -162,9 +162,40 @@ extension AZDecimal: Equatable {
 
 extension AZDecimal: Comparable {
     public static func < (lhs: AZDecimal, rhs: AZDecimal) -> Bool {
-        let ld = Double(lhs.value) ?? 0
-        let rd = Double(rhs.value) ?? 0
-        return ld < rd
+        let lNeg = lhs.value.hasPrefix(AZDecimal.minusChar)
+        let rNeg = rhs.value.hasPrefix(AZDecimal.minusChar)
+
+        // 符号が異なる場合
+        if lNeg != rNeg { return lNeg }
+
+        // 符号が同じ場合は絶対値で比較（負なら結果反転）
+        let lAbs = lNeg ? String(lhs.value.dropFirst()) : lhs.value
+        let rAbs = lNeg ? String(rhs.value.dropFirst()) : rhs.value
+
+        let lParts = lAbs.split(separator: Character(AZDecimal.dotChar), omittingEmptySubsequences: false)
+        let rParts = rAbs.split(separator: Character(AZDecimal.dotChar), omittingEmptySubsequences: false)
+        let lInt = String(lParts[0])
+        let rInt = String(rParts[0])
+
+        // 整数部の桁数で比較
+        if lInt.count != rInt.count {
+            let absLess = lInt.count < rInt.count
+            return lNeg ? !absLess : absLess
+        }
+        // 同桁数なら辞書順（ASCII数字なので有効）
+        if lInt != rInt {
+            let absLess = lInt < rInt
+            return lNeg ? !absLess : absLess
+        }
+        // 整数部が等しければ小数部を比較
+        let lDec = lParts.count > 1 ? String(lParts[1]) : ""
+        let rDec = rParts.count > 1 ? String(rParts[1]) : ""
+        // 短い方をゼロ埋めして比較
+        let maxLen = max(lDec.count, rDec.count)
+        let lPad = lDec.padding(toLength: maxLen, withPad: "0", startingAt: 0)
+        let rPad = rDec.padding(toLength: maxLen, withPad: "0", startingAt: 0)
+        let absLess = lPad < rPad
+        return lNeg ? !absLess : absLess
     }
 }
 
