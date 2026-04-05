@@ -85,6 +85,39 @@ public struct AZDecimal: Sendable {
         isNegative ? AZDecimal(String(value.dropFirst())) : self
     }
 
+    // MARK: - 平方根・立方根
+
+    /// ニュートン法の反復回数。Double 初期値（~15桁）から SBCD_PRECISION 桁に到達するまでの回数。
+    /// 1回ごとに有効桁数が2倍になるため ceil(log2(precision/15)) + 安全マージン2。
+    private static let newtonIterations: Int = max(4, Int(ceil(log2(Double(precision) / 15.0))) + 2)
+
+    /// 平方根を返す。負の値には使用しないこと（AZFormula 側で事前チェック済み）。
+    public func squareRoot() -> AZDecimal {
+        if isZero { return .zero }
+        let initial = Foundation.sqrt(Double(value) ?? 1.0)
+        var x = AZDecimal(String(initial))
+        let two: AZDecimal = "2"
+        for _ in 0..<AZDecimal.newtonIterations {
+            x = (x + self / x) / two
+        }
+        return x
+    }
+
+    /// 立方根を返す。負の値にも対応。
+    public func cubeRoot() -> AZDecimal {
+        let negative = isNegative
+        let a = negative ? self.abs : self
+        if a.isZero { return .zero }
+        let initial = Foundation.pow(Double(a.value) ?? 1.0, 1.0 / 3.0)
+        var x = AZDecimal(String(initial))
+        let two: AZDecimal = "2"
+        let three: AZDecimal = "3"
+        for _ in 0..<AZDecimal.newtonIterations {
+            x = (two * x + a / (x * x)) / three
+        }
+        return negative ? AZDecimal(AZDecimal.minusChar + x.value) : x
+    }
+
     // MARK: - 演算子
 
     public static func + (lhs: AZDecimal, rhs: AZDecimal) -> AZDecimal { lhs.adding(rhs) }

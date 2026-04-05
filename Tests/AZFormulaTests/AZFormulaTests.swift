@@ -216,7 +216,7 @@ final class EvaluateTests: XCTestCase {
     }
 
     func test_sqrt() {
-        XCTAssertEqual(value("√25"), "5.0")
+        XCTAssertEqual(value("√25"), "5")
     }
 
     func test_sqrt_negative_returnsError() {

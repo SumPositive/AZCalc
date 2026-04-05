@@ -339,3 +339,56 @@ final class FormatTests: XCTestCase {
         XCTAssertEqual(value.rounded(config: d0).formatted(config: d0), "123,456,789")
     }
 }
+
+// MARK: - 平方根・立方根
+
+final class RootTests: XCTestCase {
+
+    // MARK: squareRoot
+
+    func test_sqrt_perfectSquare() {
+        XCTAssertEqual(AZDecimal("4").squareRoot(), AZDecimal("2"))
+        XCTAssertEqual(AZDecimal("9").squareRoot(), AZDecimal("3"))
+        XCTAssertEqual(AZDecimal("25").squareRoot(), AZDecimal("5"))
+        XCTAssertEqual(AZDecimal("100").squareRoot(), AZDecimal("10"))
+    }
+
+    func test_sqrt_fraction() {
+        // √0.25 = 0.5（有限小数なので完全一致）
+        XCTAssertEqual(AZDecimal("0.25").squareRoot(), AZDecimal("0.5"))
+    }
+
+    func test_sqrt_zero() {
+        XCTAssertEqual(AZDecimal("0").squareRoot(), AZDecimal("0"))
+    }
+
+    func test_sqrt_precision_exceedsDouble() {
+        // √2 は無理数。BCD ニュートン法により Double（~15桁）を超える精度が得られることを確認。
+        let result = AZDecimal("2").squareRoot().value
+        XCTAssertTrue(result.filter(\.isNumber).count > 15, "BCD sqrt should exceed Double precision: \(result)")
+    }
+
+    // MARK: cubeRoot
+
+    func test_cbrt_perfectCube() {
+        XCTAssertEqual(AZDecimal("8").cubeRoot(), AZDecimal("2"))
+        XCTAssertEqual(AZDecimal("27").cubeRoot(), AZDecimal("3"))
+        XCTAssertEqual(AZDecimal("125").cubeRoot(), AZDecimal("5"))
+    }
+
+    func test_cbrt_negative() {
+        // ∛(-8) = -2
+        XCTAssertEqual(AZDecimal("-8").cubeRoot(), AZDecimal("-2"))
+        XCTAssertEqual(AZDecimal("-27").cubeRoot(), AZDecimal("-3"))
+    }
+
+    func test_cbrt_zero() {
+        XCTAssertEqual(AZDecimal("0").cubeRoot(), AZDecimal("0"))
+    }
+
+    func test_cbrt_precision_exceedsDouble() {
+        // ∛2 は無理数。BCD ニュートン法により Double（~15桁）を超える精度が得られることを確認。
+        let result = AZDecimal("2").cubeRoot().value
+        XCTAssertTrue(result.filter(\.isNumber).count > 15, "BCD cbrt should exceed Double precision: \(result)")
+    }
+}

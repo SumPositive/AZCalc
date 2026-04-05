@@ -283,16 +283,13 @@ public enum AZFormula {
             case opSqrt:
                 guard stack.count >= 1 else { return .failure(.invalidExpression) }
                 let a = stack.removeLast()
-                let v = Double(a.value) ?? 0
-                if v < 0 { return .failure(.negativeSqrt) }
-                stack.append(AZDecimal(String(sqrt(v))))
+                if a.isNegative { return .failure(.negativeSqrt) }
+                stack.append(a.squareRoot())
 
             case opCbrt:
                 guard stack.count >= 1 else { return .failure(.invalidExpression) }
                 let a = stack.removeLast()
-                let v = Double(a.value) ?? 0
-                let cbrt = v < 0 ? -pow(-v, 1.0 / 3.0) : pow(v, 1.0 / 3.0)
-                stack.append(AZDecimal(String(cbrt)))
+                stack.append(a.cubeRoot())
 
             default:
                 stack.append(AZDecimal(token))
