@@ -20,8 +20,8 @@ import AZDecimalC
 /// ```
 public struct AZDecimal: Sendable {
 
-    /// BCD 演算精度（整数部 + 小数部の合計桁数）
-    public static let precision = 60
+    /// BCD 演算精度（整数部 + 小数部の合計桁数）。C ヘッダの `SBCD_PRECISION` と同値。
+    public static let precision = Int(SBCD_PRECISION)
 
     /// ゼロ値
     public static let zero = AZDecimal("0")
