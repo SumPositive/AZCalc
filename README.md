@@ -20,6 +20,8 @@ Two products in one package:
 Floating-point-free arithmetic using Binary Coded Decimal (BCD).
 Up to 30 integer digits + 30 decimal digits (60 digits total).
 
+> **Changing precision:** Edit `SBCD_PRECISION` in `Sources/AZDecimalC/include/SBCD.h` and rebuild. The value must be **even**. The upper bound is limited by stack consumption of the fixed-size C array (`char digit[SBCD_PRECISION+1]`).
+
 ### Basic usage
 
 ```swift
