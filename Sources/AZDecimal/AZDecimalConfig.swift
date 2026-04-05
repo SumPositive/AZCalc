@@ -67,4 +67,31 @@ public struct AZDecimalConfig: Sendable {
 
     /// デフォルト設定（小数3桁・四捨五入・3桁区切り）
     public static let `default` = AZDecimalConfig()
+
+    // MARK: - フルエントモディファイア
+
+    /// 小数桁数を設定して返す。
+    public func digits(_ n: Int) -> AZDecimalConfig {
+        var c = self; c.decimalDigits = n; return c
+    }
+
+    /// 丸めタイプを設定して返す。
+    public func rounding(_ type: RoundType) -> AZDecimalConfig {
+        var c = self; c.roundType = type; return c
+    }
+
+    /// 末尾ゼロ補充を設定して返す。
+    public func trailingZero(_ enabled: Bool) -> AZDecimalConfig {
+        var c = self; c.trailZero = enabled; return c
+    }
+
+    /// 桁区切りを設定して返す。
+    public func grouping(_ type: GroupType, separator: String = ",") -> AZDecimalConfig {
+        var c = self; c.groupType = type; c.groupSeparator = separator; return c
+    }
+
+    /// 小数点記号を設定して返す。
+    public func decimalSep(_ separator: String) -> AZDecimalConfig {
+        var c = self; c.decimalSeparator = separator; return c
+    }
 }
