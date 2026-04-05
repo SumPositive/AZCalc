@@ -164,7 +164,7 @@ public struct AZDecimal: Sendable {
                 decPart = decPart.padding(toLength: config.decimalDigits, withPad: "0", startingAt: 0)
             }
         } else if !decPart.isEmpty {
-            decPart = decPart.replacingOccurrences(of: "0+$", with: "", options: .regularExpression)
+            while decPart.last == "0" { decPart.removeLast() }
         }
 
         // 組み立て
