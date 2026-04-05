@@ -184,17 +184,17 @@ public enum AZFormula {
                     case opAdd:
                         // "100+5%" → "100*(100+5)/100"
                         tokens.removeLast()
-                        tokens += [opMul, opPtL, per, opAdd, current, opPtR, opDiv, per]
+                        tokens.append(contentsOf: [opMul, opPtL, per, opAdd, current, opPtR, opDiv, per])
                     case opSub:
                         // "100-5%" → "100*(100-5)/100"
                         tokens.removeLast()
-                        tokens += [opMul, opPtL, per, opSub, current, opPtR, opDiv, per]
+                        tokens.append(contentsOf: [opMul, opPtL, per, opSub, current, opPtR, opDiv, per])
                     case opMul, opMul_:
                         // "100*5%" → "100*5/100"
-                        tokens += [current, opDiv, per]
+                        tokens.append(contentsOf: [current, opDiv, per])
                     case opDiv, opDiv_:
                         // "100/5%" → "100/5*100"
-                        tokens += [current, opMul, per]
+                        tokens.append(contentsOf: [current, opMul, per])
                     default:
                         tokens.append(current); tokens.append(opDiv); tokens.append(per)
                     }
