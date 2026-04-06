@@ -13,6 +13,16 @@ Two products in one package:
 | **AZDecimal** | Signed BCD decimal arithmetic — 60-digit precision, 7 rounding modes |
 | **AZFormula** | Formula string evaluator — parses and evaluates infix expressions |
 
+## Demo
+
+<p>
+  <img src="docs/images/demo-formula.png" width="30%" alt="AZFormula — formula evaluation with √2" />
+  &nbsp;
+  <img src="docs/images/demo-rounding.png" width="30%" alt="AZDecimal — rounding mode comparison" />
+  &nbsp;
+  <img src="docs/images/demo-format.png" width="30%" alt="AZDecimal — number formatting" />
+</p>
+
 ---
 
 ## AZDecimal
