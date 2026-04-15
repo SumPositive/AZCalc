@@ -19,6 +19,7 @@
 		BF000000000000000000000A /* FormulaViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FIL000000000000000000008 /* FormulaViewModelTests.swift */; };
 		BF000000000000000000000B /* RoundingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FIL000000000000000000009 /* RoundingViewModelTests.swift */; };
 		BF00000000000000000000C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = FIL00000000000000000000A /* Localizable.xcstrings */; };
+		C394B6002F8393C100F9C557 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C394B5FF2F8393C100F9C557 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C394B5FF2F8393C100F9C557 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FIL000000000000000000001 /* AZCalcDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AZCalcDemoApp.swift; sourceTree = "<group>"; };
 		FIL000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FIL000000000000000000003 /* FormulaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormulaViewModel.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 		GRP000000000000000000003 /* AZCalcDemo */ = {
 			isa = PBXGroup;
 			children = (
+				C394B5FF2F8393C100F9C557 /* Assets.xcassets */,
 				FIL000000000000000000001 /* AZCalcDemoApp.swift */,
 				FIL000000000000000000002 /* ContentView.swift */,
 				FIL000000000000000000003 /* FormulaViewModel.swift */,
@@ -196,6 +199,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C394B6002F8393C100F9C557 /* Assets.xcassets in Resources */,
 				BF00000000000000000000C /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
