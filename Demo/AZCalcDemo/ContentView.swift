@@ -7,11 +7,11 @@ struct ContentView: View {
     var body: some View {
         TabView {
             FormulaCalculatorView()
-                .tabItem { Label("計算機", systemImage: "function") }
+                .tabItem { Label("app.tab.calculator", systemImage: "function") }
             RoundingComparisonView()
-                .tabItem { Label("丸め", systemImage: "plusminus") }
+                .tabItem { Label("app.tab.rounding", systemImage: "plusminus") }
             FormatDemoView()
-                .tabItem { Label("書式", systemImage: "textformat.123") }
+                .tabItem { Label("app.tab.format", systemImage: "textformat.123") }
         }
     }
 }
@@ -25,13 +25,13 @@ extension AZDecimalConfig.RoundType {
 
     var demoLabel: LocalizedStringKey {
         switch self {
-        case .rup:      "切り上げ (rup)"
-        case .rPlus:    "正方向 (rPlus)"
-        case .r54:      "四捨五入 (r54)"
-        case .r55:      "五捨五超入 (r55)"
-        case .r65:      "五捨六入 (r65)"
-        case .rMinus:   "負方向 (rMinus)"
-        case .truncate: "切り捨て (truncate)"
+        case .rup:      "rounding.mode.rup.option"
+        case .rPlus:    "rounding.mode.rPlus.option"
+        case .r54:      "rounding.mode.r54.option"
+        case .r55:      "rounding.mode.r55.option"
+        case .r65:      "rounding.mode.r65.option"
+        case .rMinus:   "rounding.mode.rMinus.option"
+        case .truncate: "rounding.mode.truncate.option"
         }
     }
 }

@@ -16,7 +16,7 @@ struct FormulaCalculatorView: View {
                     examplesSection
                 }
             }
-            .navigationTitle("AZFormula")
+            .navigationTitle("formula.title")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -47,8 +47,8 @@ struct FormulaCalculatorView: View {
     // MARK: - フォームセクション
 
     private var formulaSection: some View {
-        Section("式") {
-            TextField("例: 100+5%", text: $viewModel.formula)
+        Section("formula.input.section") {
+            TextField("formula.input.placeholder", text: $viewModel.formula)
                 .font(.body.monospacedDigit())
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -56,10 +56,10 @@ struct FormulaCalculatorView: View {
     }
 
     private var configSection: some View {
-        Section("設定") {
-            Stepper("小数桁数: \(viewModel.decimalDigits)",
+        Section("settings.title") {
+            Stepper("common.decimalDigits.value \(viewModel.decimalDigits)",
                     value: $viewModel.decimalDigits, in: 0...10)
-            Picker("丸めタイプ", selection: $viewModel.roundType) {
+            Picker("rounding.type.label", selection: $viewModel.roundType) {
                 ForEach(AZDecimalConfig.RoundType.demoAllCases, id: \.self) { type in
                     Text(type.demoLabel).tag(type)
                 }
@@ -68,7 +68,7 @@ struct FormulaCalculatorView: View {
     }
 
     private var examplesSection: some View {
-        Section("使用例（タップで入力）") {
+        Section("formula.examples.section") {
             ForEach(FormulaExample.all) { ex in
                 Button {
                     viewModel.formula = ex.formula
@@ -78,7 +78,7 @@ struct FormulaCalculatorView: View {
                             .font(.body.monospacedDigit())
                             .foregroundStyle(.primary)
                         Spacer()
-                        Text(LocalizedStringKey(ex.description))
+                        Text(LocalizedStringKey(ex.descriptionKey))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -93,18 +93,19 @@ struct FormulaCalculatorView: View {
 struct FormulaExample: Identifiable {
     let id = UUID()
     let formula: String
-    let description: String
+    // 説明文は Localizable.xcstrings の ID-key で管理する。
+    let descriptionKey: String
 
     static let all: [FormulaExample] = [
-        FormulaExample(formula: "100+5%",    description: "5%増し"),
-        FormulaExample(formula: "100-5%",    description: "5%引き"),
-        FormulaExample(formula: "100×5%",    description: "100の5%"),
-        FormulaExample(formula: "100÷5%",    description: "5%での除算"),
-        FormulaExample(formula: "1÷3",       description: "割り切れない"),
-        FormulaExample(formula: "√2",        description: "平方根"),
-        FormulaExample(formula: "∛27",       description: "立方根"),
-        FormulaExample(formula: "(1+2)×(4-1)", description: "括弧"),
-        FormulaExample(formula: "-(20-5)",   description: "符号反転"),
-        FormulaExample(formula: "-3+4×-2-6÷3", description: "複合式"),
+        FormulaExample(formula: "100+5%",    descriptionKey: "formula.example.addPercent"),
+        FormulaExample(formula: "100-5%",    descriptionKey: "formula.example.subtractPercent"),
+        FormulaExample(formula: "100×5%",    descriptionKey: "formula.example.percentOf"),
+        FormulaExample(formula: "100÷5%",    descriptionKey: "formula.example.divideByPercent"),
+        FormulaExample(formula: "1÷3",       descriptionKey: "formula.example.nonTerminating"),
+        FormulaExample(formula: "√2",        descriptionKey: "formula.example.squareRoot"),
+        FormulaExample(formula: "∛27",       descriptionKey: "formula.example.cubeRoot"),
+        FormulaExample(formula: "(1+2)×(4-1)", descriptionKey: "formula.example.parentheses"),
+        FormulaExample(formula: "-(20-5)",   descriptionKey: "formula.example.negate"),
+        FormulaExample(formula: "-3+4×-2-6÷3", descriptionKey: "formula.example.complex"),
     ]
 }

@@ -1,6 +1,7 @@
 // FormulaViewModel.swift
 
 import Observation
+import Foundation
 import AZDecimal
 import AZFormula
 
@@ -36,9 +37,9 @@ final class FormulaViewModel {
 
     private func errorMessage(_ error: AZFormulaError) -> String {
         switch error {
-        case .tooLong:            "式が長すぎます（200文字以内）"
-        case .negativeSqrt:       "負の数の平方根"
-        case .invalidExpression:  "無効な式"
+        case .tooLong:            String(localized: "formula.error.tooLong")
+        case .negativeSqrt:       String(localized: "formula.error.negativeSqrt")
+        case .invalidExpression:  String(localized: "formula.error.invalidExpression")
         }
     }
 }

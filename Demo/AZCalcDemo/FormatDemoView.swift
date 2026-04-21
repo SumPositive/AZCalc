@@ -30,47 +30,47 @@ struct FormatDemoView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("入力") {
-                    TextField("数値", text: $inputText)
+                Section("common.input.section") {
+                    TextField("common.number.placeholder", text: $inputText)
                         .font(.body.monospacedDigit())
                         .keyboardType(.numbersAndPunctuation)
                         .autocorrectionDisabled()
                 }
 
-                Section("丸め") {
-                    Stepper("小数桁数: \(decimalDigits)", value: $decimalDigits, in: 0...10)
-                    Picker("丸めタイプ", selection: $roundType) {
+                Section("rounding.section") {
+                    Stepper("common.decimalDigits.value \(decimalDigits)", value: $decimalDigits, in: 0...10)
+                    Picker("rounding.type.label", selection: $roundType) {
                         ForEach(AZDecimalConfig.RoundType.demoAllCases, id: \.self) { type in
                             Text(type.demoLabel).tag(type)
                         }
                     }
-                    Toggle("末尾ゼロ補充", isOn: $trailZero)
+                    Toggle("format.trailingZeros.label", isOn: $trailZero)
                 }
 
-                Section("桁区切り") {
-                    Picker("区切りタイプ", selection: $groupType) {
-                        Text("なし").tag(AZDecimalConfig.GroupType.none)
-                        Text("3桁 (1,234,567)").tag(AZDecimalConfig.GroupType.threes)
-                        Text("4桁 (1234,5678)").tag(AZDecimalConfig.GroupType.fours)
-                        Text("インド式 (12,34,567)").tag(AZDecimalConfig.GroupType.indian)
+                Section("format.grouping.section") {
+                    Picker("format.grouping.type.label", selection: $groupType) {
+                        Text("format.grouping.none").tag(AZDecimalConfig.GroupType.none)
+                        Text("format.grouping.threes").tag(AZDecimalConfig.GroupType.threes)
+                        Text("format.grouping.fours").tag(AZDecimalConfig.GroupType.fours)
+                        Text("format.grouping.indian").tag(AZDecimalConfig.GroupType.indian)
                     }
                     HStack {
-                        Text("桁区切り記号")
+                        Text("format.grouping.separator.label")
                         Spacer()
-                        TextField(",", text: $groupSeparator)
+                        TextField("format.grouping.separator.placeholder", text: $groupSeparator)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 40)
                     }
                     HStack {
-                        Text("小数点記号")
+                        Text("format.decimal.separator.label")
                         Spacer()
-                        TextField(".", text: $decimalSeparator)
+                        TextField("format.decimal.separator.placeholder", text: $decimalSeparator)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 40)
                     }
                 }
 
-                Section("結果") {
+                Section("common.result.section") {
                     Text(formattedResult)
                         .font(.largeTitle.bold().monospacedDigit())
                         .minimumScaleFactor(0.5)
@@ -78,7 +78,7 @@ struct FormatDemoView: View {
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
-            .navigationTitle("AZDecimal Format")
+            .navigationTitle("format.title")
             .navigationBarTitleDisplayMode(.inline)
         }
     }

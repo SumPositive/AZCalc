@@ -8,12 +8,12 @@ struct RoundingComparisonView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("入力") {
-                    TextField("数値", text: $viewModel.inputText)
+                Section("common.input.section") {
+                    TextField("common.number.placeholder", text: $viewModel.inputText)
                         .font(.body.monospacedDigit())
                         .keyboardType(.numbersAndPunctuation)
                         .autocorrectionDisabled()
-                    Stepper("小数桁数: \(viewModel.decimalDigits)",
+                    Stepper("common.decimalDigits.value \(viewModel.decimalDigits)",
                             value: $viewModel.decimalDigits, in: 0...10)
                 }
 
@@ -21,9 +21,9 @@ struct RoundingComparisonView: View {
                     ForEach(viewModel.rows) { row in
                         HStack(alignment: .top, spacing: 12) {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(LocalizedStringKey(row.modeName))
+                                Text(LocalizedStringKey(row.modeNameKey))
                                     .font(.subheadline.bold())
-                                Text(LocalizedStringKey(row.description))
+                                Text(LocalizedStringKey(row.descriptionKey))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -35,13 +35,13 @@ struct RoundingComparisonView: View {
                         .padding(.vertical, 2)
                     }
                 } header: {
-                    Text("丸めモード比較")
+                    Text("rounding.comparison.title")
                 } footer: {
-                    Text("切り捨て（truncate）は桁制限なしで生の値を返します。")
+                    Text("rounding.truncate.footer")
                         .font(.caption)
                 }
             }
-            .navigationTitle("AZDecimal Rounding")
+            .navigationTitle("rounding.title")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
