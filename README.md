@@ -6,6 +6,8 @@ BCD decimal arithmetic and formula evaluation for Swift.
 ![Swift](https://img.shields.io/badge/Swift-5.9%2B-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+**Documentation:** [English](https://docs.azukid.com/en/sumpo/AZCalc/azcalc.html) · [日本語](https://docs.azukid.com/jp/sumpo/AZCalc/azcalc.html)
+
 Two products in one package:
 
 | Product | Description |
