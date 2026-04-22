@@ -173,11 +173,11 @@
 			};
 			buildConfigurationList = CFG000000000000000000004 /* Build configuration list for PBXProject "AZCalcDemo" */;
 			compatibilityVersion = "Xcode 15.0";
-			developmentRegion = ja;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				ja,
 				en,
+				ja,
 				Base,
 			);
 			mainGroup = GRP000000000000000000001;
