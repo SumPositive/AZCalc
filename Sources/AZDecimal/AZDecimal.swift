@@ -91,8 +91,9 @@ public struct AZDecimal: Sendable {
     /// 1回ごとに有効桁数が2倍になるため ceil(log2(precision/15)) + 安全マージン2。
     private static let newtonIterations: Int = max(4, Int(ceil(log2(Double(precision) / 15.0))) + 2)
 
-    /// 平方根を返す。負の値には使用しないこと（AZFormula 側で事前チェック済み）。
+    /// 平方根を返す。負の値を渡してはならない。
     public func squareRoot() -> AZDecimal {
+        precondition(!isNegative, "squareRoot() called on a negative value: \(value)")
         if isZero { return .zero }
         let initial = Foundation.sqrt(Double(value) ?? 1.0)
         var x = AZDecimal(String(initial))
