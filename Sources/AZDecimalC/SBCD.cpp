@@ -6,7 +6,6 @@
  *
  */
 #include "SBCD.h"
-//#import <Foundation/Foundation.h>
 #include <assert.h>
 #include <stdio.h>
 
@@ -21,9 +20,6 @@ static char charToValue( char c )
 	return c - 0x30;
 }
 
-// ここに回答を書き込んで、そのポインタを return している。
-//static char strReturn[SBCD_STRING_BUFFER_SIZE];  // 符号・小数点・終端NULを含む出力用
-					  
 //---------------------------------------------------------------------------
 // 文字列を構造体メンバに代入する（小数点付の文字列を内部形式で格納する）
 // 必ず、負号を取り去った状態で代入すること
@@ -72,10 +68,8 @@ static void stringToSbcd( const char *zNum, SBCD *pSBCD )
 	assert(se_cnt <= SBCD_PRECISION);
 	// 小数部
 	sy_cnt = 0;
-	cDecimal[sy_cnt] = '0';  // 小数なし
-    //s_cnt = 0;
 	while( *pNum != 0x00 && sy_cnt < SBCD_PRECISION ){
-		cDecimal[sy_cnt++] = *pNum++;  //Buf[bcnt++];
+		cDecimal[sy_cnt++] = *pNum++;
 	}
 	cDecimal[sy_cnt] = 0x00;
 	assert(sy_cnt <= SBCD_PRECISION);
@@ -84,10 +78,8 @@ static void stringToSbcd( const char *zNum, SBCD *pSBCD )
     printf("stringToSbcd: zNum=%s cInteger=%s cDecimal=%s minus=%d \n",zNum,cInteger,cDecimal,pSBCD->minus);
 #endif
 
-    //構造体メンバのサイズ
-    //int s_size = sizeof(pSBCD->digit);
     //整数部を構造体に内部形式で入れる
-    i = SBCD_PRECISION / 2 - 1;  //-1しないこと
+    i = SBCD_PRECISION / 2 - 1;
     for( ; 0<=i; i-- ){
     	if(1<=se_cnt){
     		pSBCD->digit[i] = charToValue(cInteger[se_cnt-1]);
@@ -169,43 +161,16 @@ static void sbcdToString( const SBCD *pSbcd, char *zAnswer)
     }
     // 文字列終端
     *zAnswer = 0x00;
-    
-//    // 小数点
-//    *zAnswer++ = SBCD_DECIMAL_SEPARATOR;
-//    //小数部（SBCDでは末尾まで0ありとする）　後の表示処理で末尾0を処理する
-//    for( ; i < SBCD_PRECISION; i++) {
-//        *zAnswer++ = (pSbcd->digit[i] + 0x30);
-//    }
-//    // 文字列終端
-//    *zAnswer = 0x00;
 }
 
-//---------------------------------------------------------------------------
-// 大きいほうのバイトサイズを返す
-//---------------------------------------------------------------------------
-/*int MaxSize( SBCD *pVal1, SBCD *pVal2)
-{
-	int bSize;
-    if( (sizeof(pVal1->digit)) >= (sizeof(pVal2->digit)) )
-    	bSize = sizeof(pVal1->digit);
-    else
-    	bSize = sizeof(pVal2->digit);
-    return bSize;
-}*/
 //---------------------------------------------------------------------------
 // 足し算
 //---------------------------------------------------------------------------
 static bool sbcAbsAdd( char *pValue1, char *pValue2, char *pAns )
 {
-	//int bSize = SBCD_PRECISION; //MaxSize(pValue1, pVal);
     int i;
-    //bool bCarry = 0;
     char carry = 0;
-    // 下の桁から計算
     for (i = SBCD_PRECISION-1; i >= 0; --i) {
-    	// 加算分と下位桁からの桁上がり分を足す
-        //pTarget->digit[i] += (pVal->digit[i] + carry);
-        //pAns->digit[i] = pTarget->digit[i] + pVal->digit[i] + carry;
         pAns[i] = pValue1[i] + pValue2[i] + carry;
         // 桁上がりチェック
         if ( pAns[i] <= 9 ) {
@@ -223,14 +188,9 @@ static bool sbcAbsAdd( char *pValue1, char *pValue2, char *pAns )
 //---------------------------------------------------------------------------
 static bool sbcAbsSub( char *pValue1, char *pValue2, char *pAns )
 {
-	//int bSize = SBCD_PRECISION; //MaxSize(pValue1, pVal);
     int i;
-    //bool bBorrow = 0;
 	char fall = 0;
-    //下の桁から計算
     for (i = SBCD_PRECISION-1; i >= 0; --i) {
-    	// 減算分と下位桁への繰り入れ分を引く
-        //pTarget->digit[i] -= (pVal->digit[i] + fall);
         pAns[i] = pValue1[i] - pValue2[i] - fall;
         //借り入れのチェック
         if ( 0 <= pAns[i] ) {
@@ -240,7 +200,6 @@ static bool sbcAbsSub( char *pValue1, char *pValue2, char *pAns )
             pAns[i] += 10; // 上位より繰り入れ
 		}
     }
-	// ここでは符号変更しない pTarget->minus = fall; // 最後に桁下がりがあればマイナス値である
     return (fall == 1);
 }
 //---------------------------------------------------------------------------

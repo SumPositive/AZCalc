@@ -8,10 +8,8 @@
 #ifndef _SBCD_H_
 #define _SBCD_H_
 
-//#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>  // C99の bool を明示的に定義（C++では不要）
+#include <stdbool.h>
 
 
 // 整数部＋小数部を合わせた有効桁数（必ず偶数値にすること）
