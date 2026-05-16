@@ -91,25 +91,25 @@ public struct AZDecimal: Sendable {
     // MARK: - 四則演算メソッド
 
     public func adding(_ other: AZDecimal) -> AZDecimal {
-        var ans = [CChar](repeating: 0, count: bufSize)
+        var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_add(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
 
     public func subtracting(_ other: AZDecimal) -> AZDecimal {
-        var ans = [CChar](repeating: 0, count: bufSize)
+        var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_sub(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
 
     public func multiplied(by other: AZDecimal) -> AZDecimal {
-        var ans = [CChar](repeating: 0, count: bufSize)
+        var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_mul(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
 
     public func divided(by other: AZDecimal) -> AZDecimal {
-        var ans = [CChar](repeating: 0, count: bufSize)
+        var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_div(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
@@ -177,7 +177,7 @@ public struct AZDecimal: Sendable {
 
     /// 設定に従い丸めた値を返す。
     public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
-        var ans = [CChar](repeating: 0, count: bufSize)
+        var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
         return AZDecimal(cResult: String(cString: ans))
     }

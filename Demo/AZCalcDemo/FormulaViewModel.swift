@@ -39,6 +39,7 @@ final class FormulaViewModel {
         switch error {
         case .tooLong:            String(localized: "formula.error.tooLong")
         case .negativeSqrt:       String(localized: "formula.error.negativeSqrt")
+        case .zeroDivision:       String(localized: "formula.error.zeroDivision")
         case .invalidExpression:  String(localized: "formula.error.invalidExpression")
         }
     }
