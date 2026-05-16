@@ -89,8 +89,14 @@ public enum AZFormula {
             $0.unicodeScalars.allSatisfy { allowedFormulaChars.contains($0) }
         }
 
-        // 1文字（単体の数値）はそのまま返す
-        if filtered.count <= 1 { return .success(filtered) }
+        // フィルタ後が空、または数字以外の1文字（単体の演算子など）はエラー
+        guard !filtered.isEmpty else { return .failure(.invalidExpression) }
+        if filtered.count == 1 {
+            guard filtered.first?.isNumber == true || filtered == opDot else {
+                return .failure(.invalidExpression)
+            }
+            return .success(filtered)
+        }
 
         let tokens = tokenize(filtered)
         let rpn    = toRPN(tokens)
@@ -127,7 +133,13 @@ public enum AZFormula {
             $0.unicodeScalars.allSatisfy { allowedFormulaChars.contains($0) }
         }
 
-        if filtered.count <= 1 { return .success(AZDecimal(filtered)) }
+        guard !filtered.isEmpty else { return .failure(.invalidExpression) }
+        if filtered.count == 1 {
+            guard filtered.first?.isNumber == true || filtered == opDot else {
+                return .failure(.invalidExpression)
+            }
+            return .success(AZDecimal(filtered))
+        }
 
         let tokens = tokenize(filtered)
         let rpn    = toRPN(tokens)
