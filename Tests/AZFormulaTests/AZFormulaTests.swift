@@ -162,6 +162,11 @@ final class EvaluateTests: XCTestCase {
         return nil
     }
 
+    private func error(_ formula: String) -> AZFormulaError? {
+        if case .failure(let e) = AZFormula.evaluate(formula) { return e }
+        return nil
+    }
+
     func test_emptyFormula() {
         XCTAssertEqual(value(""), "0")
     }
@@ -220,12 +225,16 @@ final class EvaluateTests: XCTestCase {
     }
 
     func test_sqrt_negative_returnsError() {
-        // "√-4" はトークン分割で ["√", "-", "4"] になりスタック不足で invalidExpression になる。
-        // "√(0-1)" は正しく -1 をスタックに積んで negativeSqrt を返す。
+        // "√(0-1)" は正しく -1 をスタックに積んで negativeSqrt を返す
         guard case .failure(let e) = AZFormula.evaluate("√(0-1)") else {
             XCTFail("Expected negativeSqrt error"); return
         }
         XCTAssertEqual(e, .negativeSqrt)
+    }
+
+    func test_sqrt_negativeLiteral_returnsError() {
+        // √ の直後のマイナスは負数として扱い negativeSqrt を返す
+        XCTAssertEqual(error("√-4"), .negativeSqrt)
     }
 
     func test_tooLong_returnsError() {
@@ -239,6 +248,35 @@ final class EvaluateTests: XCTestCase {
     func test_invalidCharacters_filtered() {
         // "1a+2$" の無効文字は除去されて "1+2" と同じ結果になる
         XCTAssertEqual(value("1a+2$"), value("1+2"))
+    }
+
+    func test_invalidSingleTokens_returnError() {
+        // 単独の小数点や演算子は数値として扱わない
+        XCTAssertEqual(error("."), .invalidExpression)
+        XCTAssertEqual(error("+"), .invalidExpression)
+        XCTAssertEqual(error("abc"), .invalidExpression)
+    }
+
+    func test_invalidMalformedNumber_returnError() {
+        // 複数の小数点を含むトークンは正規化せず式エラーにする
+        XCTAssertEqual(error("1..2"), .invalidExpression)
+    }
+
+    func test_invalidPercentWithoutOperand_returnError() {
+        // パーセント系の直前に数値がない場合は式エラーにする
+        XCTAssertEqual(error("%"), .invalidExpression)
+        XCTAssertEqual(error("100+%"), .invalidExpression)
+    }
+
+    func test_invalidMismatchedParentheses_returnError() {
+        // 対応する括弧がない場合は式エラーにする
+        XCTAssertEqual(error("1)"), .invalidExpression)
+        XCTAssertEqual(error("1+(2"), .invalidExpression)
+    }
+
+    func test_zeroDivision_returnsError() {
+        // ゼロ除算は専用エラーで返す
+        XCTAssertEqual(error("1÷0"), .zeroDivision)
     }
 }
 
@@ -287,10 +325,25 @@ final class EvaluateDecimalTests: XCTestCase {
     func test_maxFormulaLength_isPublic() {
         XCTAssertEqual(AZFormula.maxFormulaLength, 200)
         // 200文字はギリギリ有効
-        let justRight = String(repeating: "1", count: 199) // 199桁の数値は1トークン
+        let justRight = String(repeating: "1", count: 200)
         XCTAssertNotNil(try? AZFormula.evaluate(justRight).get())
         // 201文字は tooLong
         guard case .failure(let e) = AZFormula.evaluate(String(repeating: "1", count: 201)) else {
+            XCTFail("Expected tooLong"); return
+        }
+        XCTAssertEqual(e, .tooLong)
+    }
+
+    func test_maxFormulaLength_canBeChanged() {
+        let original = AZFormula.maxFormulaLength
+        addTeardownBlock {
+            AZFormula.maxFormulaLength = original
+        }
+
+        // 実行時に変更した最大文字数を評価に反映する
+        AZFormula.maxFormulaLength = 3
+        XCTAssertNotNil(try? AZFormula.evaluate("123").get())
+        guard case .failure(let e) = AZFormula.evaluate("1234") else {
             XCTFail("Expected tooLong"); return
         }
         XCTAssertEqual(e, .tooLong)

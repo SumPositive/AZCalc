@@ -92,14 +92,23 @@ public enum AZFormula {
         // フィルタ後が空、または数字以外の1文字（単体の演算子など）はエラー
         guard !filtered.isEmpty else { return .failure(.invalidExpression) }
         if filtered.count == 1 {
-            guard filtered.first?.isNumber == true || filtered == opDot else {
+            guard filtered.first?.isNumber == true else {
                 return .failure(.invalidExpression)
             }
             return .success(filtered)
         }
 
-        let tokens = tokenize(filtered)
-        let rpn    = toRPN(tokens)
+        let tokens: [String]
+        switch tokenizeResult(filtered) {
+        case .success(let value): tokens = value
+        case .failure(let error): return .failure(error)
+        }
+
+        let rpn: [String]
+        switch toRPNResult(tokens) {
+        case .success(let value): rpn = value
+        case .failure(let error): return .failure(error)
+        }
 
         switch evalRPN(rpn) {
         case .success(let decimal):
@@ -135,14 +144,23 @@ public enum AZFormula {
 
         guard !filtered.isEmpty else { return .failure(.invalidExpression) }
         if filtered.count == 1 {
-            guard filtered.first?.isNumber == true || filtered == opDot else {
+            guard filtered.first?.isNumber == true else {
                 return .failure(.invalidExpression)
             }
             return .success(AZDecimal(filtered))
         }
 
-        let tokens = tokenize(filtered)
-        let rpn    = toRPN(tokens)
+        let tokens: [String]
+        switch tokenizeResult(filtered) {
+        case .success(let value): tokens = value
+        case .failure(let error): return .failure(error)
+        }
+
+        let rpn: [String]
+        switch toRPNResult(tokens) {
+        case .success(let value): rpn = value
+        case .failure(let error): return .failure(error)
+        }
 
         switch evalRPN(rpn) {
         case .success(let decimal):
@@ -156,12 +174,17 @@ public enum AZFormula {
 
     /// 数式文字列をトークン列に分割する。
     public static func tokenize(_ formula: String) -> [String] {
+        (try? tokenizeResult(formula).get()) ?? []
+    }
+
+    /// 数式文字列を検証しながらトークン列に分割する
+    private static func tokenizeResult(_ formula: String) -> Result<[String], AZFormulaError> {
         var tokens: [String] = []
         var current = ""
         var prevToken = ""
 
         let operators: Set<Character> = Set("+-*/×÷√∛()%割分厘")
-        let signPrev:  Set<Character> = Set("+-*/×÷(")
+        let signPrev:  Set<Character> = Set("+-*/×÷(√∛")
 
         for (index, char) in formula.enumerated() {
             guard operators.contains(char) else {
@@ -181,6 +204,9 @@ public enum AZFormula {
             // パーセント系（%・割・分・厘）
             if char == Character(opPerc) || char == Character(opWari)
                 || char == Character(opBu) || char == Character(opRi) {
+                guard isNumericToken(current) else {
+                    return .failure(.invalidExpression)
+                }
 
                 let per: String
                 switch char {
@@ -230,11 +256,16 @@ public enum AZFormula {
         }
 
         if !current.isEmpty { tokens.append(current) }
-        return tokens
+        return .success(tokens)
     }
 
     /// トークン列を逆ポーランド記法（RPN）に変換する（Shunting Yard アルゴリズム）。
     public static func toRPN(_ tokens: [String]) -> [String] {
+        (try? toRPNResult(tokens).get()) ?? []
+    }
+
+    /// トークン列を検証しながら逆ポーランド記法へ変換する
+    private static func toRPNResult(_ tokens: [String]) -> Result<[String], AZFormulaError> {
         var rpn: [String] = []
         var ope: [String] = []
         var prev: String? = nil
@@ -276,15 +307,23 @@ public enum AZFormula {
                 while let top = ope.last, top != opPtL {
                     rpn.append(ope.removeLast())
                 }
-                if ope.last == opPtL { ope.removeLast() }
+                guard ope.last == opPtL else {
+                    return .failure(.invalidExpression)
+                }
+                ope.removeLast()
             } else {
-                rpn.append(token)
+                return .failure(.invalidExpression)
             }
             prev = token
         }
 
-        while let op = ope.popLast() { rpn.append(op) }
-        return rpn
+        while let op = ope.popLast() {
+            guard op != opPtL else {
+                return .failure(.invalidExpression)
+            }
+            rpn.append(op)
+        }
+        return .success(rpn)
     }
 
     // MARK: - 内部評価
@@ -297,15 +336,18 @@ public enum AZFormula {
         if s.hasPrefix("-") { s = s.dropFirst() }
         guard !s.isEmpty else { return false }
         var dotSeen = false
+        var digitSeen = false
         for c in s {
             if c == "." {
                 if dotSeen { return false }
                 dotSeen = true
             } else if !c.isNumber {
                 return false
+            } else {
+                digitSeen = true
             }
         }
-        return true
+        return digitSeen
     }
 
     private static func evalRPN(_ tokens: [String]) -> Result<AZDecimal, AZFormulaError> {
@@ -314,7 +356,7 @@ public enum AZFormula {
         for token in tokens {
             switch token {
             case opAdd, opSub, opMul, opMul_, opDiv, opDiv_:
-                guard stack.count >= 2 else { return .failure(.invalidExpression) }
+                guard 2 <= stack.count else { return .failure(.invalidExpression) }
                 let b = stack.removeLast()
                 let a = stack.removeLast()
                 switch token {
@@ -322,23 +364,24 @@ public enum AZFormula {
                 case opSub:         stack.append(a - b)
                 case opMul, opMul_: stack.append(a * b)
                 case opDiv, opDiv_:
-                if b.isZero { return .failure(.zeroDivision) }
-                stack.append(a / b)
+                    if b.isZero { return .failure(.zeroDivision) }
+                    stack.append(a / b)
                 default: break
                 }
 
             case opSqrt:
-                guard stack.count >= 1 else { return .failure(.invalidExpression) }
+                guard 1 <= stack.count else { return .failure(.invalidExpression) }
                 let a = stack.removeLast()
                 if a.isNegative { return .failure(.negativeSqrt) }
                 stack.append(a.squareRoot())
 
             case opCbrt:
-                guard stack.count >= 1 else { return .failure(.invalidExpression) }
+                guard 1 <= stack.count else { return .failure(.invalidExpression) }
                 let a = stack.removeLast()
                 stack.append(a.cubeRoot())
 
             default:
+                guard isNumericToken(token) else { return .failure(.invalidExpression) }
                 stack.append(AZDecimal(token))
             }
         }
