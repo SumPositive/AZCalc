@@ -14,9 +14,7 @@
 extern "C" {
 #endif
 
-/// C/C++の stringAddition をラップする関数
-
-
+/// result は SBCD_STRING_BUFFER_SIZE 以上を確保して渡す。
 /// SwiftでNon-Optionalに認識させるために `const` を付ける
 void sbcd_add(char *result, const char *a, const char *b);
 void sbcd_sub(char *result, const char *a, const char *b);

@@ -22,7 +22,7 @@ static char charToValue( char c )
 }
 
 // ここに回答を書き込んで、そのポインタを return している。
-//static char strReturn[SBCD_PRECISION+1+1];  // 使用範囲[0]-[SBCD_PRECISION]まで、[SBCD_PRECISION+1]はDEBUG用
+//static char strReturn[SBCD_STRING_BUFFER_SIZE];  // 符号・小数点・終端NULを含む出力用
 					  
 //---------------------------------------------------------------------------
 // 文字列を構造体メンバに代入する（小数点付の文字列を内部形式で格納する）
@@ -360,7 +360,7 @@ static void sbcAbsDivid( char *pValue1, char *pValue2, char *pAns )
  */
  
 //【和】------------------------------------------------------------
-// strAnswer : Write    *strAnswer[SBCD_PRECISION+1]まで使用可能
+// strAnswer : Write    *strAnswer[SBCD_STRING_BUFFER_SIZE]まで使用可能
 // strNum1 : Read Only 変更禁止
 // strNum2 : Read Only 変更禁止
 extern "C" void stringAddition( char *strAnswer, const char *strNum1, const char *strNum2 )
@@ -431,7 +431,7 @@ extern "C" void stringAddition( char *strAnswer, const char *strNum1, const char
 
 
 //【差】------------------------------------------------------------
-// strAnswer : Write    *strAnswer[SBCD_PRECISION+1]まで使用可能
+// strAnswer : Write    *strAnswer[SBCD_STRING_BUFFER_SIZE]まで使用可能
 // strNum1 : Read Only 変更禁止
 // strNum2 : Read Only 変更禁止
 extern "C" void stringSubtract( char *strAnswer, const char *strNum1, const char *strNum2 )
@@ -454,7 +454,7 @@ extern "C" void stringSubtract( char *strAnswer, const char *strNum1, const char
 
 
 //【積】------------------------------------------------------------
-// strAnswer : Write    *strAnswer[SBCD_PRECISION+1]まで使用可能
+// strAnswer : Write    *strAnswer[SBCD_STRING_BUFFER_SIZE]まで使用可能
 // strNum1 : Read Only 変更禁止
 // strNum2 : Read Only 変更禁止
 extern "C" void stringMultiply( char *strAnswer, const char *strNum1, const char *strNum2 )
@@ -490,7 +490,7 @@ extern "C" void stringMultiply( char *strAnswer, const char *strNum1, const char
 }
 
 //【商】------------------------------------------------------------
-// strAnswer : Write    *strAnswer[SBCD_PRECISION+1]まで使用可能
+// strAnswer : Write    *strAnswer[SBCD_STRING_BUFFER_SIZE]まで使用可能
 // strNum1 : Read Only 変更禁止
 // strNum2 : Read Only 変更禁止
 extern "C" void stringDivision( char *strAnswer, const char *strNum1, const char *strNum2 )

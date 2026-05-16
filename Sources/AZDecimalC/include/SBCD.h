@@ -21,6 +21,9 @@
 #ifndef SBCD_PRECISION
 #define SBCD_PRECISION	60
 #endif
+// 文字列出力バッファの最小サイズ。
+// 符号・小数点・終端NULを含めるため SBCD_PRECISION + 4 以上を確保する。
+#define SBCD_STRING_BUFFER_SIZE (SBCD_PRECISION + 4)
 // 60 = ((PRECISION * 2) * 2)  「偶数丸め」するためには小数以下2倍の桁数が必要
 //					* 2) これは、内部計算をアプリ有効桁数(PRECISION)の2倍とするため
 //						 * 2) さらにこれは、「偶数丸め」するため。小数以下2倍の桁数が必要
@@ -46,9 +49,9 @@ typedef struct {
 #define SBCD_MINUS_SIGN         '-' // マイナス符号文字
 
 
-//----------------------------------------------- *strAnswer[SBCD_PRECISION+1 以上] 確保して渡すこと。
+//----------------------------------------------- *strAnswer[SBCD_STRING_BUFFER_SIZE 以上] 確保して渡すこと。
 // strAnswer に答えが書き込まれます。 よって、strAnswer を次の strNum1やstrNum2 に使うことができます。
-// strNum1,strNum1 は、Read Only (変更されません）
+// strNum1,strNum2 は、Read Only (変更されません）
 #ifdef __cplusplus
 extern "C" {
 #endif
