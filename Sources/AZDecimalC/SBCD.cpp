@@ -52,22 +52,21 @@ static void stringToSbcd( const char *zNum, SBCD *pSBCD )
     //配列アクセスで整数部と小数部に分ける
     const char *pNum = &zNum[0];
     pSBCD->minus = false;
+	// 符号は先頭のみ認識
+	if (*pNum == SBCD_MINUS_SIGN) {
+        pSBCD->minus = true;
+        pNum++;
+    }
 	// 整数部
 	se_cnt = 0;
     while( *pNum != 0x00 && se_cnt < SBCD_PRECISION ){
-    	if(*pNum == SBCD_MINUS_SIGN){
-            pSBCD->minus = true; // マイナス値
-        	pNum++;  // bcnt++;
-        } 
-		else if(*pNum == SBCD_DECIMAL_SEPARATOR){ //小数点
-           	//dot_flg = true;
-           	pNum++;  //bcnt++;
+		if(*pNum == SBCD_DECIMAL_SEPARATOR){ //小数点
+           	pNum++;
            	break; // 整数部終了、小数部へ
         }
 		else {
-			cInteger[se_cnt++] = *pNum++;  //Buf[bcnt++];
+			cInteger[se_cnt++] = *pNum++;
         }
-        //if(dot_flg) break;
     }
 	cInteger[se_cnt] = 0x00;
 	assert(se_cnt <= SBCD_PRECISION);
