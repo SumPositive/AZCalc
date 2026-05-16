@@ -16,6 +16,8 @@ public enum AZFormulaError: Error, Sendable {
     case tooLong
     /// 負の数の平方根
     case negativeSqrt
+    /// ゼロ除算
+    case zeroDivision
     /// 評価できない式
     case invalidExpression
 }
@@ -277,7 +279,9 @@ public enum AZFormula {
                 case opAdd:         stack.append(a + b)
                 case opSub:         stack.append(a - b)
                 case opMul, opMul_: stack.append(a * b)
-                case opDiv, opDiv_: stack.append(a / b)
+                case opDiv, opDiv_:
+                if b.isZero { return .failure(.zeroDivision) }
+                stack.append(a / b)
                 default: break
                 }
 
