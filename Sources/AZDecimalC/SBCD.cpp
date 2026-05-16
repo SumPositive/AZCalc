@@ -440,6 +440,7 @@ extern "C" void stringSubtract( char *strAnswer, const char *strNum1, const char
 	
 	if (SBCD_PRECISION+2 < strlen(strNum2)) { // (+2)符号と小数点の分
 		strcpy(strAnswer, "-0");
+		return;
 	}
 	// Num2 の符号反転して和を求める
 	if (strNum2[0] == SBCD_MINUS_SIGN) {
