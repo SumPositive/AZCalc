@@ -134,7 +134,6 @@ public struct AZDecimal: Sendable {
 
     /// 設定に従い丸めた値を返す。
     public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
-        guard config.roundType != .truncate else { return self }
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
         return AZDecimal(String(cString: ans))
