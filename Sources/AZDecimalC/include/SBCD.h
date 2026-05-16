@@ -21,6 +21,9 @@
 #ifndef SBCD_PRECISION
 #define SBCD_PRECISION	60
 #endif
+#ifdef __cplusplus
+static_assert(SBCD_PRECISION % 2 == 0, "SBCD_PRECISION must be even");
+#endif
 // 文字列出力バッファの最小サイズ。
 // 符号・小数点・終端NULを含めるため SBCD_PRECISION + 4 以上を確保する。
 #define SBCD_STRING_BUFFER_SIZE (SBCD_PRECISION + 4)

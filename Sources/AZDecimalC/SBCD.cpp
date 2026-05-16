@@ -115,7 +115,7 @@ static void stringToSbcd( const char *zNum, SBCD *pSBCD )
 // SBCD ZERO判定
 //	pSbcd	:Read Only
 //------------------------------------------------------
-static bool sbcdZero( SBCD *pSbcd )
+static bool sbcdZero( const SBCD *pSbcd )
 {
 	for(int i=0; i < SBCD_PRECISION; i++ ){
     	if( pSbcd->digit[i] != 0x00 ) return false;
@@ -129,7 +129,7 @@ static bool sbcdZero( SBCD *pSbcd )
 //	pSbcd	:Read Only
 //	zAnswer	:Write Return
 //---------------------------------------------------------
-static void sbcdToString( SBCD *pSbcd, char *zAnswer)
+static void sbcdToString( const SBCD *pSbcd, char *zAnswer)
 {
     int i;
     char c;
@@ -141,9 +141,9 @@ static void sbcdToString( SBCD *pSbcd, char *zAnswer)
     for(i = 0; i < SBCD_PRECISION/2; i++) {			// 整数部
         c = pSbcd->digit[i];
         // [0]でない数値[1]-[9]あり
-    	if((0x01<=c) & (c<=0x09) ) isEnable = true;
+    	if((0x01<=c) && (c<=0x09) ) isEnable = true;
         // 小数点前は必ずあるものとする
-        if( !isEnable & (i==SBCD_PRECISION/2-1)) isEnable = true;
+        if( !isEnable && (i==SBCD_PRECISION/2-1)) isEnable = true;
         // isEnable = true 以降有効
         if( isEnable ){
         	*zAnswer++ = (pSbcd->digit[i] + 0x30);
