@@ -227,22 +227,34 @@ public enum AZFormula {
         var ope: [String] = []
         var prev: String? = nil
 
+        // 中置二項演算子の優先度（数値が小さいほど高優先）
         let priority: [String: Int] = [
-            opSqrt: 0, opCbrt: 0,
             opMul: 1, opDiv: 1, opMul_: 1, opDiv_: 1,
             opAdd: 2, opSub: 2
         ]
+        // 前置単項演算子（√・∛）は右結合のため priority マップと分離して管理
+        // スタック上での優先度は 0（×÷ より高い）とみなしてポップ判定に使う
+        let prefixUnary: Set<String> = [opSqrt, opCbrt]
+        let prefixUnaryPriority = 0
 
         for token in tokens {
-            // 単項マイナス → "0 - ..."
-            if token == opSub && (prev == nil || priority[prev!] != nil || prev == opPtL) {
+            // 単項マイナス → "0 - ..."（前置単項演算子の直後も単項とみなす）
+            if token == opSub && (prev == nil || priority[prev!] != nil
+                                  || prefixUnary.contains(prev!) || prev == opPtL) {
                 rpn.append("0")
             }
 
             if Double(token) != nil {
                 rpn.append(token)
+            } else if prefixUnary.contains(token) {
+                // 前置単項演算子は右結合：ポップせずそのままスタックへ積む
+                ope.append(token)
             } else if let pri = priority[token] {
-                while let top = ope.last, let topPri = priority[top], topPri <= pri {
+                // 中置二項演算子：スタック上の高優先演算子を吐き出す
+                // 前置単項演算子はスタック上で priority 0 として扱う
+                while let top = ope.last {
+                    let topPri = priority[top] ?? (prefixUnary.contains(top) ? prefixUnaryPriority : Int.max)
+                    guard topPri <= pri else { break }
                     rpn.append(ope.removeLast())
                 }
                 ope.append(token)
