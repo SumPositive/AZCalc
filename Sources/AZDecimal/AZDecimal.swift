@@ -43,7 +43,44 @@ public struct AZDecimal: Sendable {
     /// 文字列から初期化。許可外の文字は除去します。
     public init(_ num: String) {
         let filtered = num.filter { $0.unicodeScalars.allSatisfy { AZDecimal.allowedChars.contains($0) } }
-        self.value = filtered.isEmpty ? "0" : filtered
+        self.value = AZDecimal.normalizedValue(filtered)
+    }
+
+    /// C コアと比較処理に渡せる数値文字列へ正規化する
+    private static func normalizedValue(_ num: String) -> String {
+        var source = num
+        var isNegative = false
+
+        // 先頭以外のマイナスは符号として扱わない
+        if source.hasPrefix(minusChar) {
+            isNegative = true
+            source.removeFirst()
+        }
+
+        let parts = source.split(separator: Character(dotChar), maxSplits: 1, omittingEmptySubsequences: false)
+        var intPart = parts.first.map(String.init) ?? ""
+        var decPart = 1 < parts.count ? String(parts[1]) : ""
+
+        // 数字以外は取り除き、複数ドット以降の文字も安全に畳み込む
+        intPart = intPart.filter(\.isNumber)
+        decPart = decPart.filter(\.isNumber)
+
+        // 整数部の先頭ゼロを除去して比較と等価性を安定させる
+        while 1 < intPart.count && intPart.first == "0" {
+            intPart.removeFirst()
+        }
+        if intPart.isEmpty {
+            intPart = "0"
+        }
+
+        // 小数部の末尾ゼロを除去して数値同値を同じ表現にする
+        while decPart.last == "0" {
+            decPart.removeLast()
+        }
+
+        let isZero = intPart == "0" && decPart.isEmpty
+        let sign = isNegative && !isZero ? minusChar : ""
+        return decPart.isEmpty ? sign + intPart : sign + intPart + dotChar + decPart
     }
 
     // MARK: - 四則演算メソッド
@@ -135,6 +172,8 @@ public struct AZDecimal: Sendable {
 
     /// 設定に従い丸めた値を返す。
     public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
+        // truncate は桁制限をせず元の値をそのまま返す
+        guard config.roundType != .truncate else { return self }
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
         return AZDecimal(String(cString: ans))

@@ -45,6 +45,12 @@ final class ArithmeticTests: XCTestCase {
         XCTAssertEqual(AZDecimal("abc123.45円") + AZDecimal("¥0.55"), AZDecimal("124"))
     }
 
+    func test_malformedInput_normalizesToZero() {
+        XCTAssertEqual(AZDecimal("-"), AZDecimal("0"))
+        XCTAssertEqual(AZDecimal("."), AZDecimal("0"))
+        XCTAssertEqual(AZDecimal("-."), AZDecimal("0"))
+    }
+
     func test_add_maxPrecision() {
         let half = AZDecimal.precision / 2
         let max1 = String(repeating: "1", count: half)
@@ -181,6 +187,11 @@ final class ComparableTests: XCTestCase {
         XCTAssertTrue(AZDecimal("-10") < AZDecimal("-9"))
     }
 
+    func test_lessThan_withLeadingZeros() {
+        XCTAssertTrue(AZDecimal("0009") < AZDecimal("10"))
+        XCTAssertFalse(AZDecimal("0010") < AZDecimal("10"))
+    }
+
     func test_lessThan_highPrecision() {
         // Double で表現できない桁数（16桁以上）でも正しく比較できる
         let big = AZDecimal("12345678901234567.1")
@@ -217,6 +228,12 @@ final class ConvenienceTests: XCTestCase {
         XCTAssertEqual(AZDecimal("-3.14").abs, AZDecimal("3.14"))
         XCTAssertEqual(AZDecimal("3.14").abs, AZDecimal("3.14"))
         XCTAssertEqual(AZDecimal("0").abs, AZDecimal("0"))
+    }
+
+    func test_numericEquivalentStrings_areEqual() {
+        XCTAssertEqual(AZDecimal("1.0"), AZDecimal("1"))
+        XCTAssertEqual(AZDecimal("01"), AZDecimal("1"))
+        XCTAssertEqual(AZDecimal("-0.0"), AZDecimal("0"))
     }
 
     func test_compoundAssignment() {
@@ -330,6 +347,12 @@ final class FormatTests: XCTestCase {
         // Fix ②: formatted() は decimalDigits を超えた小数部を切り詰める
         let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false, groupType: .none)
         XCTAssertEqual(AZDecimal("1.23456").formatted(config), "1.23")
+    }
+
+    func test_formatted_malformedInputShowsZero() {
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false, groupType: .none)
+        XCTAssertEqual(AZDecimal("-").formatted(config), "0")
+        XCTAssertEqual(AZDecimal(".").formatted(config), "0")
     }
 
     func test_roundThenFormat() {
