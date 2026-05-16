@@ -131,6 +131,12 @@ final class RoundingTests: XCTestCase {
         XCTAssertEqual(value.rounded(AZDecimalConfig(decimalDigits: 0, roundType: .r54)), AZDecimal("4"))
     }
 
+    func test_r54_roundsBeyondFifteenDecimalDigits() {
+        let value = AZDecimal("1.123456789012345678905")
+        let config = AZDecimalConfig(decimalDigits: 20, roundType: .r54)
+        XCTAssertEqual(value.rounded(config), AZDecimal("1.12345678901234567891"))
+    }
+
     func test_r55_bankersRounding() {
         // 偶数位で「五」→ 切り捨て
         XCTAssertEqual(AZDecimal("1.25").rounded(AZDecimalConfig(decimalDigits: 1, roundType: .r55)), AZDecimal("1.2"))
@@ -239,6 +245,11 @@ final class FluentConfigTests: XCTestCase {
         let config = AZDecimalConfig.default.digits(-1)
         XCTAssertEqual(config.decimalDigits, 0)
         XCTAssertEqual(AZDecimal("1.5").rounded(config), AZDecimal("2"))
+    }
+
+    func test_digits_overMaxClampsToMaxDecimalDigits() {
+        let config = AZDecimalConfig.default.digits(AZDecimalConfig.maxDecimalDigits + 1)
+        XCTAssertEqual(config.decimalDigits, AZDecimalConfig.maxDecimalDigits)
     }
 
     func test_rounding() {

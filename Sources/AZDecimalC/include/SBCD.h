@@ -22,6 +22,8 @@
 #ifdef __cplusplus
 static_assert(SBCD_PRECISION % 2 == 0, "SBCD_PRECISION must be even");
 #endif
+// 小数部として保持できる最大桁数。標準設定では 30 桁。
+#define SBCD_DECIMAL_DIGITS (SBCD_PRECISION / 2)
 // 文字列出力バッファの最小サイズ。
 // 符号・小数点・終端NULを含めるため SBCD_PRECISION + 4 以上を確保する。
 #define SBCD_STRING_BUFFER_SIZE (SBCD_PRECISION + 4)
@@ -64,7 +66,7 @@ void stringMultiply( char *strAnswer, const char *strNum1, const char *strNum2 )
 void stringDivision( char *strAnswer, const char *strNum1, const char *strNum2 );
 
 // 丸め
-//	iDecimal	= 小数桁数（小数部の最大桁数）[ 0 〜 iPrecision ]
+//	iDecimal	= 小数桁数（小数部の最大桁数）[ 0 〜 SBCD_DECIMAL_DIGITS ]
 //	iType		= 丸め方法 (0)RM (1)RZ:切捨 (2)6/5 (3)5/5 (4)5/4 (5)RI:切上 (6)RP		[1.0.6]以降
 
 // old (0)Rminus (1)Rdown:切捨 (2)6/5 (3)5/5 (4)5/4 (5)Rup:切上 (6)Rplus

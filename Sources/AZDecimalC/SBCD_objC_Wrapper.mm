@@ -31,7 +31,7 @@ void sbcd_div(char *result, const char *a, const char *b) {
 /// - Parameters:
 ///   - result: SBCD_STRING_BUFFER_SIZE 以上を確保した結果バッファ
 ///   - num: 数字文字列
-///   - digits: 小数部の出力桁数  [ 0 〜 SBCD_PRECISION ]　+1桁目を丸める
+///   - digits: 小数部の出力桁数  [ 0 〜 SBCD_DECIMAL_DIGITS ]　+1桁目を丸める
 ///   - type: 丸め方法
 void sbcd_round(char *result, const char *num, int digits, int type) {
     stringRounding(result, num,  digits, type);

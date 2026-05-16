@@ -25,7 +25,7 @@ void sbcd_div(char *result, const char *a, const char *b);
 /// - Parameters:
 ///   - result: 結果
 ///   - num: 数字文字列
-///   - digits: 小数部の最大桁数  [ 0 〜 SBCD_PRECISION ]
+///   - digits: 小数部の最大桁数  [ 0 〜 SBCD_DECIMAL_DIGITS ]
 ///   - type: 丸め方法
 void sbcd_round(char *result, const char *num, int digits, int type);
 

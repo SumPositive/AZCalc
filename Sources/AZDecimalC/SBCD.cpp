@@ -497,7 +497,7 @@ extern "C" void stringDivision( char *strAnswer, const char *strNum1, const char
 
 //----------------------------------------------------------------------------------------
 // 丸め
-//  iDecimal = 小数桁数（小数部の出力桁数）[ 0 〜 iPrecision ]　+1桁目を丸める
+//  iDecimal = 小数桁数（小数部の出力桁数）[ 0 〜 SBCD_DECIMAL_DIGITS ]　+1桁目を丸める
 //	iType	 = 丸め方法 (0)Rup:切上 (1)Rplus (2)5/4 (3)5/5 (4)6/5 (5)Rminus (6)Rdown:切捨
 extern "C" void stringRounding( char *strAnswer, const char *strNum, int iDecimal, int iType )
 {
@@ -506,6 +506,9 @@ extern "C" void stringRounding( char *strAnswer, const char *strNum, int iDecima
 	// 小数桁数が負の場合は整数丸めとして扱い、配列前方へのアクセスを防ぐ
 	if (iDecimal < 0) {
 		iDecimal = 0;
+	}
+	if (SBCD_DECIMAL_DIGITS < iDecimal) {
+		iDecimal = SBCD_DECIMAL_DIGITS;
 	}
 	
 	stringToSbcd(strNum, pSbcd);
@@ -535,9 +538,11 @@ extern "C" void stringRounding( char *strAnswer, const char *strNum, int iDecima
 	if (SBCD_PRECISION/2 + iDecimal - 1 < iRoundPos) {
 		iRoundPos = SBCD_PRECISION/2 + iDecimal - 1;  // 丸め位置
 	}
-	
-	if (SBCD_PRECISION/4 * 3 <= iRoundPos) {
-		iRoundPos = SBCD_PRECISION/4 * 3 - 1;  // 丸め処理が可能な最終位置 ＜＜偶数丸めでは最大2倍必要になるため
+
+	if (SBCD_PRECISION - 1 <= iRoundPos) {
+		// 最大小数桁では次桁が存在しないため、30桁精度を保ったまま文字列化する。
+		sbcdToString(pSbcd, strAnswer);
+		return;
 	}
 	
 	if (iEnd < iRoundPos) {

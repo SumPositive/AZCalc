@@ -1,12 +1,17 @@
 // AZDecimalConfig.swift
 // AZDecimal の書式・丸め設定
 
+import AZDecimalC
+
 /// AZDecimal の書式・丸め設定。
 ///
 /// `Sendable` な値型なので、スレッドをまたいで安全に渡せます。
 public struct AZDecimalConfig: Sendable {
 
     // MARK: - 丸め
+
+    /// 小数部として保持できる最大桁数。
+    public static let maxDecimalDigits = Int(SBCD_DECIMAL_DIGITS)
 
     /// 丸めタイプ
     public enum RoundType: Int, Sendable {
@@ -99,8 +104,10 @@ public struct AZDecimalConfig: Sendable {
         var c = self; c.decimalSeparator = separator; return c
     }
 
-    /// 小数桁数の不正な負値を整数丸めへ正規化する。
+    /// 小数桁数を C コアが扱える範囲へ正規化する。
     private static func normalizedDecimalDigits(_ n: Int) -> Int {
-        n < 0 ? 0 : n
+        if n < 0 { return 0 }
+        if maxDecimalDigits < n { return maxDecimalDigits }
+        return n
     }
 }

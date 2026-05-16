@@ -67,6 +67,11 @@ a /= "4"   // 4
 
 ### Rounding
 
+`decimalDigits` accepts values from `0` through `AZDecimalConfig.maxDecimalDigits`
+(30 by default, derived from `SBCD_PRECISION / 2`). Values below `0` are clamped
+to `0`, and values above the maximum are clamped to the maximum. Rounding can
+therefore preserve the full 30 decimal digits supported by the default BCD core.
+
 ```swift
 let config = AZDecimalConfig(decimalDigits: 2, roundType: .r54)
 let result = AZDecimal("3.456").rounded(config)
@@ -118,7 +123,7 @@ let config = AZDecimalConfig.default.digits(2).rounding(.r54)
 
 | Method | Description |
 |---|---|
-| `.digits(_ n: Int)` | Set decimal digits |
+| `.digits(_ n: Int)` | Set decimal digits, clamped to `0...AZDecimalConfig.maxDecimalDigits` |
 | `.rounding(_ type: RoundType)` | Set rounding mode |
 | `.trailingZero(_ enabled: Bool)` | Pad / strip trailing zeros |
 | `.grouping(_ type: GroupType, separator: String)` | Set digit grouping |
