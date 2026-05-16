@@ -80,7 +80,7 @@ public enum AZFormula {
         guard !formula.isEmpty else {
             return .success("0")
         }
-        guard formula.count < maxFormulaLength else {
+        guard formula.count <= maxFormulaLength else {
             return .failure(.tooLong)
         }
 
@@ -119,7 +119,7 @@ public enum AZFormula {
         guard !formula.isEmpty else {
             return .success(.zero)
         }
-        guard formula.count < maxFormulaLength else {
+        guard formula.count <= maxFormulaLength else {
             return .failure(.tooLong)
         }
 
