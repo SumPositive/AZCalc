@@ -300,7 +300,7 @@ public enum AZFormula {
             }
         }
 
-        guard let result = stack.first else { return .failure(.invalidExpression) }
+        guard stack.count == 1, let result = stack.first else { return .failure(.invalidExpression) }
         return .success(result)
     }
 }
