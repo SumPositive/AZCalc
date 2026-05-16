@@ -503,6 +503,11 @@ extern "C" void stringRounding( char *strAnswer, const char *strNum, int iDecima
 {
     SBCD sbcd,		*pSbcd = &sbcd;
 
+	// 小数桁数が負の場合は整数丸めとして扱い、配列前方へのアクセスを防ぐ
+	if (iDecimal < 0) {
+		iDecimal = 0;
+	}
+	
 	stringToSbcd(strNum, pSbcd);
 	
     int iStart = SBCD_PRECISION-1;

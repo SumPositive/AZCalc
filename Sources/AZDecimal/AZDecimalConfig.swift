@@ -20,7 +20,11 @@ public struct AZDecimalConfig: Sendable {
     }
 
     /// 小数桁数（丸め後の表示桁数）
-    public var decimalDigits: Int
+    public var decimalDigits: Int {
+        didSet {
+            decimalDigits = Self.normalizedDecimalDigits(decimalDigits)
+        }
+    }
 
     /// 小数点記号（例: `"."` / `"，"`）
     public var decimalSeparator: String
@@ -57,7 +61,7 @@ public struct AZDecimalConfig: Sendable {
         groupType: GroupType = .threes,
         groupSeparator: String = ","
     ) {
-        self.decimalDigits = decimalDigits
+        self.decimalDigits = Self.normalizedDecimalDigits(decimalDigits)
         self.decimalSeparator = decimalSeparator
         self.roundType = roundType
         self.trailZero = trailZero
@@ -93,5 +97,10 @@ public struct AZDecimalConfig: Sendable {
     /// 小数点記号を設定して返す。
     public func decimalSep(_ separator: String) -> AZDecimalConfig {
         var c = self; c.decimalSeparator = separator; return c
+    }
+
+    /// 小数桁数の不正な負値を整数丸めへ正規化する。
+    private static func normalizedDecimalDigits(_ n: Int) -> Int {
+        n < 0 ? 0 : n
     }
 }

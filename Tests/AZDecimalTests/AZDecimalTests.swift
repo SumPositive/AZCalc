@@ -235,6 +235,12 @@ final class FluentConfigTests: XCTestCase {
         XCTAssertEqual(config.decimalDigits, 5)
     }
 
+    func test_digits_negativeClampsToZero() {
+        let config = AZDecimalConfig.default.digits(-1)
+        XCTAssertEqual(config.decimalDigits, 0)
+        XCTAssertEqual(AZDecimal("1.5").rounded(config), AZDecimal("2"))
+    }
+
     func test_rounding() {
         let config = AZDecimalConfig.default.rounding(.truncate)
         XCTAssertEqual(config.roundType, .truncate)
