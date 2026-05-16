@@ -41,7 +41,6 @@ private let opPtR  = ")"
 private let opDot  = "."
 
 private let allOperators  = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_]
-private let formulaLength = AZFormula.maxFormulaLength
 private let allowedFormulaChars = CharacterSet(charactersIn: "0123456789.-+*/×÷√∛()%割分厘")
 
 // MARK: - AZFormula
@@ -81,7 +80,7 @@ public enum AZFormula {
         guard !formula.isEmpty else {
             return .success("0")
         }
-        guard formula.count < formulaLength else {
+        guard formula.count < maxFormulaLength else {
             return .failure(.tooLong)
         }
 
@@ -120,7 +119,7 @@ public enum AZFormula {
         guard !formula.isEmpty else {
             return .success(.zero)
         }
-        guard formula.count < formulaLength else {
+        guard formula.count < maxFormulaLength else {
             return .failure(.tooLong)
         }
 
