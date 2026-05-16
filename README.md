@@ -271,6 +271,18 @@ AZCalc/
 
 Open `AZCalc.xcworkspace` in Xcode to run both package tests and demo app tests together.
 
+### AZDecimalC — Implementation Notes
+
+**Division algorithm (sbcAbsDivid)**
+
+The quotient digit at each position is found by *counting how many times the divisor can be subtracted* before the remainder goes negative (linear search, 0–9 iterations). An alternative is trial quotient estimation using the divisor's leading digit, which reduces the inner loop to at most 3 iterations (~3× faster). It was not adopted for the following reasons:
+
+1. **Correctness** — linear search always produces the exact digit with no estimation-error correction logic needed.
+2. **Simplicity** — the implementation is short and easy to audit.
+3. **Performance** — worst-case cost is 60 digits × 10 iterations × 60 char operations = 36,000 operations, which completes in microseconds on any modern device. This is sufficient for a calculator application.
+
+If `SBCD_PRECISION` is increased significantly (e.g. 240+) and division latency becomes measurable, trial quotient estimation would be the natural next step.
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
