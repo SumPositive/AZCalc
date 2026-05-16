@@ -256,7 +256,7 @@ public enum AZFormula {
                 rpn.append("0")
             }
 
-            if Double(token) != nil {
+            if isNumericToken(token) {
                 rpn.append(token)
             } else if prefixUnary.contains(token) {
                 // 前置単項演算子は右結合：ポップせずそのままスタックへ積む
@@ -288,6 +288,25 @@ public enum AZFormula {
     }
 
     // MARK: - 内部評価
+
+    /// AZDecimal が受け付ける数値トークンかどうかを判定する。
+    /// `Double` 変換では "inf"・"nan"・科学的記数法も通過してしまうため、
+    /// 文字種（数字・符号・小数点のみ）で判定する。
+    private static func isNumericToken(_ token: String) -> Bool {
+        var s = token[...]
+        if s.hasPrefix("-") { s = s.dropFirst() }
+        guard !s.isEmpty else { return false }
+        var dotSeen = false
+        for c in s {
+            if c == "." {
+                if dotSeen { return false }
+                dotSeen = true
+            } else if !c.isNumber {
+                return false
+            }
+        }
+        return true
+    }
 
     private static func evalRPN(_ tokens: [String]) -> Result<AZDecimal, AZFormulaError> {
         var stack: [AZDecimal] = []
