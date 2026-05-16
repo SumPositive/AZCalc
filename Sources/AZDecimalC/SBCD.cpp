@@ -46,8 +46,8 @@ static void stringToSbcd( const char *zNum, SBCD *pSBCD )
     //動的配列変数確保
 	char cInteger[SBCD_PRECISION+1];
 	char cDecimal[SBCD_PRECISION+1];
-	memset(cInteger, 0x00, SBCD_PRECISION); // 初期化
-	memset(cDecimal, 0x00, SBCD_PRECISION); // 初期化
+	memset(cInteger, 0x00, SBCD_PRECISION+1); // 初期化
+	memset(cDecimal, 0x00, SBCD_PRECISION+1); // 初期化
 
     //配列アクセスで整数部と小数部に分ける
     const char *pNum = &zNum[0];
