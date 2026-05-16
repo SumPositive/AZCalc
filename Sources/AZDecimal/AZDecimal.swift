@@ -46,6 +46,11 @@ public struct AZDecimal: Sendable {
         self.value = AZDecimal.normalizedValue(filtered)
     }
 
+    /// C 層の演算結果から初期化。正規化をスキップし "-0" 番兵を保持する。
+    private init(cResult: String) {
+        self.value = cResult
+    }
+
     /// C コアと比較処理に渡せる数値文字列へ正規化する
     private static func normalizedValue(_ num: String) -> String {
         var source = num
@@ -88,25 +93,25 @@ public struct AZDecimal: Sendable {
     public func adding(_ other: AZDecimal) -> AZDecimal {
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_add(&ans, value, other.value)
-        return AZDecimal(String(cString: ans))
+        return AZDecimal(cResult: String(cString: ans))
     }
 
     public func subtracting(_ other: AZDecimal) -> AZDecimal {
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_sub(&ans, value, other.value)
-        return AZDecimal(String(cString: ans))
+        return AZDecimal(cResult: String(cString: ans))
     }
 
     public func multiplied(by other: AZDecimal) -> AZDecimal {
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_mul(&ans, value, other.value)
-        return AZDecimal(String(cString: ans))
+        return AZDecimal(cResult: String(cString: ans))
     }
 
     public func divided(by other: AZDecimal) -> AZDecimal {
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_div(&ans, value, other.value)
-        return AZDecimal(String(cString: ans))
+        return AZDecimal(cResult: String(cString: ans))
     }
 
     // MARK: - プロパティ
@@ -174,7 +179,7 @@ public struct AZDecimal: Sendable {
     public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
         var ans = [CChar](repeating: 0, count: bufSize)
         sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
-        return AZDecimal(String(cString: ans))
+        return AZDecimal(cResult: String(cString: ans))
     }
 
     /// 設定に従い桁区切り・小数記号を付けた文字列を返す。
