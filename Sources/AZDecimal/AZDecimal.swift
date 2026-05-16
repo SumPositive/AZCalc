@@ -307,7 +307,14 @@ extension AZDecimal: ExpressibleByIntegerLiteral {
 }
 
 extension AZDecimal: ExpressibleByFloatLiteral {
-    public init(floatLiteral value: Double) { self.init(String(value)) }
+    public init(floatLiteral value: Double) {
+        guard value.isFinite else { self.init("0"); return }
+        // String(Double) は極端な値で科学的記数法("1e-20"など)を生成する。
+        // allowedChars フィルタが 'e' を除去すると全く別の値になるため、
+        // Decimal を経由して平叙記法("0.00000000000000000001")に変換する。
+        let plain = Decimal(string: String(value))?.description ?? "0"
+        self.init(plain)
+    }
 }
 
 extension AZDecimal: CustomStringConvertible {
