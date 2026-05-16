@@ -33,7 +33,7 @@ public struct AZDecimal: Sendable {
     private static let dotChar     = "."
     private static let allowedChars = CharacterSet(charactersIn: "0123456789.-")
 
-    private let bufSize = Int(SBCD_STRING_BUFFER_SIZE)
+    private static let bufSize = Int(SBCD_STRING_BUFFER_SIZE)
 
     /// 内部文字列（`"-"`, `"."`, `"0"–"9"` のみで構成）
     public private(set) var value: String

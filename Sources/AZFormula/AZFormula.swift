@@ -38,7 +38,6 @@ private let opBu   = "分"
 private let opRi   = "厘"
 private let opPtL  = "("
 private let opPtR  = ")"
-private let opDot  = "."
 
 private let allOperators  = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_]
 private let allowedFormulaChars = CharacterSet(charactersIn: "0123456789.-+*/×÷√∛()%割分厘")
