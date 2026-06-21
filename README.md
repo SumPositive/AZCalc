@@ -276,6 +276,13 @@ AZCalc/
 
 Open `AZCalc.xcworkspace` in Xcode to run both package tests and demo app tests together.
 
+### Xcode Project Management
+
+XcodeGen is not permitted in this repository. Do not add or use `project.yml`,
+`project.yaml`, or other project-generation configurations. Create and update
+`.xcodeproj` and `.xcworkspace` files directly in Xcode, and commit those Xcode-managed
+files when project settings or file references change.
+
 ### AZDecimalC — Implementation Notes
 
 **Division algorithm (sbcAbsDivid)**
