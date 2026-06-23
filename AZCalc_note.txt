@@ -14,8 +14,15 @@ README.mdと取扱説明を更新して
 --------------------------------
 
 
-エラー表現を型で表す
+#1 エラー表現を型で表す
 現状の "-0" 文字列番兵から Double 同様に .nan/.infinity を表現できる内部状態を持たせ、isNaN で判定
+
+#2 RoundType の意味の明確化
+case truncateToDigits  // decimalDigits で切り捨て（C層 case 6）
+case keepFull          // 丸めず全桁保持（現 .truncate）
+
+#3 Codable + Sendable の正式サポート
+
 
 
 

@@ -91,11 +91,18 @@ final class ArithmeticTests: XCTestCase {
 
 final class RoundingTests: XCTestCase {
 
-    func test_truncate_returnsRawValue() {
+    func test_keepFull_returnsRawValue() {
         let value = AZDecimal("3.129")
-        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate)
-        // truncate モードでは rounded() は self を返す（桁制限なし）
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .keepFull)
+        // keepFull モードでは rounded() は self を返す（桁制限なし）
         XCTAssertEqual(value.rounded(config), value)
+    }
+
+    func test_truncateToDigits_truncatesValue() {
+        let value = AZDecimal("3.129")
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncateToDigits)
+        // truncateToDigits は値を decimalDigits に切り捨てる
+        XCTAssertEqual(value.rounded(config), AZDecimal("3.12"))
     }
 
     func test_rup_absoluteCeiling() {
@@ -270,8 +277,8 @@ final class FluentConfigTests: XCTestCase {
     }
 
     func test_rounding() {
-        let config = AZDecimalConfig.default.rounding(.truncate)
-        XCTAssertEqual(config.roundType, .truncate)
+        let config = AZDecimalConfig.default.rounding(.keepFull)
+        XCTAssertEqual(config.roundType, .keepFull)
     }
 
     func test_trailingZero() {
@@ -307,50 +314,50 @@ final class FluentConfigTests: XCTestCase {
 final class FormatTests: XCTestCase {
 
     func test_trailZero_true() {
-        let config = AZDecimalConfig(decimalDigits: 3, roundType: .truncate, trailZero: true, groupType: .none)
+        let config = AZDecimalConfig(decimalDigits: 3, roundType: .keepFull, trailZero: true, groupType: .none)
         XCTAssertEqual(AZDecimal("3.1").formatted(config), "3.100")
     }
 
     func test_trailZero_false() {
-        let config = AZDecimalConfig(decimalDigits: 3, roundType: .truncate, trailZero: false, groupType: .none)
+        let config = AZDecimalConfig(decimalDigits: 3, roundType: .keepFull, trailZero: false, groupType: .none)
         XCTAssertEqual(AZDecimal("3.1").formatted(config), "3.1")
     }
 
     func test_decimalSeparator_custom() {
         // formatted() は丸めを行わない。decimalDigits を適用するには先に rounded() を呼ぶこと。
         // ここでは小数1桁の値をそのまま渡してセパレータだけを確認する。
-        let config = AZDecimalConfig(decimalDigits: 1, decimalSeparator: ":", roundType: .truncate,
+        let config = AZDecimalConfig(decimalDigits: 1, decimalSeparator: ":", roundType: .keepFull,
                                      trailZero: false, groupType: .none)
         XCTAssertEqual(AZDecimal("100.1").formatted(config), "100:1")
     }
 
     func test_groupSeparator_threes() {
         // 小数2桁の値を渡して桁区切りのみ確認
-        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .keepFull, trailZero: false,
                                      groupType: .threes, groupSeparator: ",")
         XCTAssertEqual(AZDecimal("123456789.01").formatted(config), "123,456,789.01")
     }
 
     func test_groupSeparator_fours() {
-        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .keepFull, trailZero: false,
                                      groupType: .fours, groupSeparator: ";")
         XCTAssertEqual(AZDecimal("123456789.01").formatted(config), "1;2345;6789.01")
     }
 
     func test_groupSeparator_indian() {
-        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false,
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .keepFull, trailZero: false,
                                      groupType: .indian, groupSeparator: ",")
         XCTAssertEqual(AZDecimal("123456789.01").formatted(config), "12,34,56,789.01")
     }
 
     func test_formatted_truncatesDecPartWhenTooLong() {
         // Fix ②: formatted() は decimalDigits を超えた小数部を切り詰める
-        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false, groupType: .none)
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .keepFull, trailZero: false, groupType: .none)
         XCTAssertEqual(AZDecimal("1.23456").formatted(config), "1.23")
     }
 
     func test_formatted_malformedInputShowsZero() {
-        let config = AZDecimalConfig(decimalDigits: 2, roundType: .truncate, trailZero: false, groupType: .none)
+        let config = AZDecimalConfig(decimalDigits: 2, roundType: .keepFull, trailZero: false, groupType: .none)
         XCTAssertEqual(AZDecimal("-").formatted(config), "0")
         XCTAssertEqual(AZDecimal(".").formatted(config), "0")
     }

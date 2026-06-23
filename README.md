@@ -100,7 +100,12 @@ print(result)  // "3.46"
 | `.r55` | Round Half Even | Round half to even — Banker's rounding | JIS Z 8401 Rule A · IEEE 754: roundTiesToEven |
 | `.r65` | Round Half Down | 5 rounds down, 6+ rounds up | — |
 | `.rMinus` | Round toward −∞ | Round toward negative infinity | IEEE 754: roundTowardNegative |
-| `.truncate` | Truncate | No rounding — return raw value | IEEE 754: roundTowardZero |
+| `.truncateToDigits` <sub>(2.0.0+)</sub> | Truncate to digits | Truncate the value to `decimalDigits` | IEEE 754: roundTowardZero |
+| `.keepFull` <sub>(2.0.0+)</sub> | Keep full | No rounding — return the raw value at full precision | — |
+
+`.keepFull` is useful when you want to **preserve full precision through chained calculations** and let display-time `formatted(_:)` handle digit truncation — e.g. a calculator accumulator that must not accumulate rounding error across steps.
+
+> **Renamed in 2.0.0:** the former `.truncate` mode is split into `.truncateToDigits` (truncates the value) and `.keepFull` (no rounding). The old `.truncate` behaved like `.keepFull`.
 
 ### Formatting
 

@@ -15,7 +15,7 @@ final class RoundingViewModelTests: XCTestCase {
     func test_allModes_present() {
         let vm = RoundingViewModel()
         let ids = Set(vm.rows.map(\.id))
-        let expected: Set<AZDecimalConfig.RoundType> = [.rup, .rPlus, .r54, .r55, .r65, .rMinus, .truncate]
+        let expected: Set<AZDecimalConfig.RoundType> = [.rup, .rPlus, .r54, .r55, .r65, .rMinus, .truncateToDigits, .keepFull]
         XCTAssertEqual(ids, expected)
     }
 
@@ -35,13 +35,22 @@ final class RoundingViewModelTests: XCTestCase {
         XCTAssertEqual(row?.result, "3.46")
     }
 
-    func test_truncate_returnsFullPrecision() {
+    func test_keepFull_returnsFullPrecision() {
         let vm = RoundingViewModel()
         vm.inputText = "3.456"
         vm.decimalDigits = 1
-        let row = vm.rows.first { $0.id == .truncate }
-        // truncate = 丸めなし、生の値をそのまま返す
+        let row = vm.rows.first { $0.id == .keepFull }
+        // keepFull = 丸めなし、生の値をそのまま返す
         XCTAssertEqual(row?.result, "3.456")
+    }
+
+    func test_truncateToDigits_truncatesValue() {
+        let vm = RoundingViewModel()
+        vm.inputText = "3.456"
+        vm.decimalDigits = 1
+        let row = vm.rows.first { $0.id == .truncateToDigits }
+        // truncateToDigits = 設定桁数で値を切り捨てる
+        XCTAssertEqual(row?.result, "3.4")
     }
 
     func test_rup_ceilsAbsoluteValue() {

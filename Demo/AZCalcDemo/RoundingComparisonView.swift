@@ -30,14 +30,14 @@ struct RoundingComparisonView: View {
                             Spacer()
                             Text(row.result)
                                 .font(.body.monospacedDigit())
-                                .foregroundStyle(row.id == .truncate ? .secondary : .primary)
+                                .foregroundStyle(row.id == .keepFull ? .secondary : .primary)
                         }
                         .padding(.vertical, 2)
                     }
                 } header: {
                     Text("rounding.comparison.title")
                 } footer: {
-                    Text("rounding.truncate.footer")
+                    Text("rounding.keepFull.footer")
                         .font(.caption)
                 }
             }

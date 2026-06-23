@@ -15,13 +15,17 @@ public struct AZDecimalConfig: Sendable {
 
     /// 丸めタイプ
     public enum RoundType: Int, Sendable {
-        case rup      = 0  // 切り上げ（絶対値型）
-        case rPlus    = 1  // 正方向丸め
-        case r54      = 2  // 四捨五入
-        case r55      = 3  // 五捨五超入（偶数丸め・銀行家の丸め）
-        case r65      = 4  // 五捨六入
-        case rMinus   = 5  // 負方向丸め
-        case truncate = 6  // 切り捨て（丸めない）
+        case rup              = 0  // 切り上げ（絶対値型）
+        case rPlus            = 1  // 正方向丸め
+        case r54              = 2  // 四捨五入
+        case r55              = 3  // 五捨五超入（偶数丸め・銀行家の丸め）
+        case r65              = 4  // 五捨六入
+        case rMinus           = 5  // 負方向丸め
+        case truncateToDigits = 6  // 設定桁数で切り捨て（値を decimalDigits に切る）
+        // 丸めず全桁保持（値をそのまま返す）
+        // 用途: 連鎖計算の中間値で精度を落としたくない場合や、表示は formatted() の
+        //       桁切りに任せて内部値は最大精度で保持したい場合（電卓のアキュムレータ等）
+        case keepFull         = 7
     }
 
     /// 小数桁数（丸め後の表示桁数）

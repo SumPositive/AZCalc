@@ -194,8 +194,8 @@ public struct AZDecimal: Sendable {
     /// 設定に従い丸めた値を返す。NaN は NaN。
     public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
         if isNaN { return .nan }
-        // .truncate は丸めをせず生値を全桁そのまま返す仕様
-        guard config.roundType != .truncate else { return self }
+        // .keepFull は丸めをせず生値を全桁そのまま返す（C 層へ渡さない）
+        guard config.roundType != .keepFull else { return self }
         var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_round(&ans, value, Int32(config.decimalDigits), Int32(config.roundType.rawValue))
         return AZDecimal(cResult: String(cString: ans))

@@ -25,8 +25,9 @@ final class RoundingViewModel {
             (.r54,      "rounding.mode.r54.title",      "rounding.mode.r54.description"),
             (.r55,      "rounding.mode.r55.title",      "rounding.mode.r55.description"),
             (.r65,      "rounding.mode.r65.title",      "rounding.mode.r65.description"),
-            (.rMinus,   "rounding.mode.rMinus.title",   "rounding.mode.rMinus.description"),
-            (.truncate, "rounding.mode.truncate.title", "rounding.mode.truncate.description"),
+            (.rMinus,           "rounding.mode.rMinus.title",           "rounding.mode.rMinus.description"),
+            (.truncateToDigits, "rounding.mode.truncateToDigits.title", "rounding.mode.truncateToDigits.description"),
+            (.keepFull,         "rounding.mode.keepFull.title",         "rounding.mode.keepFull.description"),
         ]
         let value = AZDecimal(inputText)
         return specs.map { (type, name, desc) in

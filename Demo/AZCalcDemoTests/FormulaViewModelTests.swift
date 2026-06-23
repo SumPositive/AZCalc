@@ -17,7 +17,7 @@ final class FormulaViewModelTests: XCTestCase {
     func test_simpleAddition() {
         let vm = FormulaViewModel()
         vm.formula = "1+2"
-        vm.roundType = .truncate
+        vm.roundType = .keepFull
         XCTAssertEqual(vm.displayResult, "3")
     }
 
