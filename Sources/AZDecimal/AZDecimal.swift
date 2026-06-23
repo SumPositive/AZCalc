@@ -29,13 +29,21 @@ public struct AZDecimal: Sendable {
     /// 一値
     public static let one = AZDecimal("1")
 
+    /// 無効値（オーバーフロー・ゼロ除算・不正演算の結果）。`Double.nan` に相当する。
+    public static let nan = AZDecimal(cResult: nanString)
+
     private static let minusChar   = "-"
     private static let dotChar     = "."
     private static let allowedChars = CharacterSet(charactersIn: "0123456789.-")
 
+    /// C 層がエラー時に返す番兵値
+    private static let cErrorSentinel = "-0"
+    /// NaN を表す内部文字列
+    private static let nanString = "nan"
+
     private static let bufSize = Int(SBCD_STRING_BUFFER_SIZE)
 
-    /// 内部文字列（`"-"`, `"."`, `"0"–"9"` のみで構成）
+    /// 内部文字列。数値は `"-"`, `"."`, `"0"–"9"` のみで構成。NaN の場合は `"nan"`。
     public private(set) var value: String
 
     // MARK: - Init
@@ -46,9 +54,9 @@ public struct AZDecimal: Sendable {
         self.value = AZDecimal.normalizedValue(filtered)
     }
 
-    /// C 層の演算結果から初期化。正規化をスキップし "-0" 番兵を保持する。
+    /// C 層の演算結果から初期化。`"-0"` 番兵を検知して NaN に変換する。
     private init(cResult: String) {
-        self.value = cResult
+        self.value = (cResult == AZDecimal.cErrorSentinel) ? AZDecimal.nanString : cResult
     }
 
     /// C コアと比較処理に渡せる数値文字列へ正規化する
@@ -91,24 +99,28 @@ public struct AZDecimal: Sendable {
     // MARK: - 四則演算メソッド
 
     public func adding(_ other: AZDecimal) -> AZDecimal {
+        if isNaN || other.isNaN { return .nan }
         var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_add(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
 
     public func subtracting(_ other: AZDecimal) -> AZDecimal {
+        if isNaN || other.isNaN { return .nan }
         var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_sub(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
 
     public func multiplied(by other: AZDecimal) -> AZDecimal {
+        if isNaN || other.isNaN { return .nan }
         var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_mul(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
     }
 
     public func divided(by other: AZDecimal) -> AZDecimal {
+        if isNaN || other.isNaN { return .nan }
         var ans = [CChar](repeating: 0, count: Self.bufSize)
         sbcd_div(&ans, value, other.value)
         return AZDecimal(cResult: String(cString: ans))
@@ -116,13 +128,16 @@ public struct AZDecimal: Sendable {
 
     // MARK: - プロパティ
 
-    /// ゼロかどうか
-    public var isZero: Bool { value == "0" || value == "-0" }
+    /// 無効値（オーバーフロー・ゼロ除算・不正演算の結果）かどうか。`Double.isNaN` に相当する。
+    public var isNaN: Bool { value == AZDecimal.nanString }
 
-    /// 負の値かどうか
-    public var isNegative: Bool { value.hasPrefix(AZDecimal.minusChar) && !isZero }
+    /// ゼロかどうか。NaN は `false`。
+    public var isZero: Bool { value == "0" }
 
-    /// 絶対値
+    /// 負の値かどうか。NaN は `false`。
+    public var isNegative: Bool { !isNaN && value.hasPrefix(AZDecimal.minusChar) }
+
+    /// 絶対値。NaN は NaN。
     public var abs: AZDecimal {
         isNegative ? AZDecimal(String(value.dropFirst())) : self
     }
@@ -133,9 +148,9 @@ public struct AZDecimal: Sendable {
     /// 1回ごとに有効桁数が2倍になるため ceil(log2(precision/15)) + 安全マージン2。
     private static let newtonIterations: Int = max(4, Int(ceil(log2(Double(precision) / 15.0))) + 2)
 
-    /// 平方根を返す。負の値を渡してはならない。
+    /// 平方根を返す。負の値・NaN は NaN を返す（`Double.squareRoot()` と同じ）。
     public func squareRoot() -> AZDecimal {
-        precondition(!isNegative, "squareRoot() called on a negative value: \(value)")
+        if isNaN || isNegative { return .nan }
         if isZero { return .zero }
         let initial = Foundation.sqrt(Double(value) ?? 1.0)
         var x = AZDecimal(String(initial))
@@ -146,8 +161,9 @@ public struct AZDecimal: Sendable {
         return x
     }
 
-    /// 立方根を返す。負の値にも対応。
+    /// 立方根を返す。負の値にも対応。NaN は NaN。
     public func cubeRoot() -> AZDecimal {
+        if isNaN { return .nan }
         let negative = isNegative
         let a = negative ? self.abs : self
         if a.isZero { return .zero }
@@ -175,8 +191,9 @@ public struct AZDecimal: Sendable {
 
     // MARK: - 丸め・書式化
 
-    /// 設定に従い丸めた値を返す。
+    /// 設定に従い丸めた値を返す。NaN は NaN。
     public func rounded(_ config: AZDecimalConfig = .default) -> AZDecimal {
+        if isNaN { return .nan }
         // .truncate は丸めをせず生値を全桁そのまま返す仕様
         guard config.roundType != .truncate else { return self }
         var ans = [CChar](repeating: 0, count: Self.bufSize)
@@ -185,8 +202,9 @@ public struct AZDecimal: Sendable {
     }
 
     /// 設定に従い桁区切り・小数記号を付けた文字列を返す。
-    /// 丸めは行いません。先に `rounded(_:)` を呼んでください。
+    /// 丸めは行いません。先に `rounded(_:)` を呼んでください。NaN は `"nan"`。
     public func formatted(_ config: AZDecimalConfig = .default) -> String {
+        if isNaN { return AZDecimal.nanString }
         var val = self.value
 
         // マイナス記号を分離
@@ -257,12 +275,16 @@ public struct AZDecimal: Sendable {
 
 extension AZDecimal: Equatable {
     public static func == (lhs: AZDecimal, rhs: AZDecimal) -> Bool {
-        lhs.value == rhs.value
+        // NaN はいかなる値とも等しくない（NaN == NaN も false）。Double と同じ。
+        if lhs.isNaN || rhs.isNaN { return false }
+        return lhs.value == rhs.value
     }
 }
 
 extension AZDecimal: Comparable {
     public static func < (lhs: AZDecimal, rhs: AZDecimal) -> Bool {
+        // NaN を含む比較はすべて false。Double と同じ。
+        if lhs.isNaN || rhs.isNaN { return false }
         let lNeg = lhs.value.hasPrefix(AZDecimal.minusChar)
         let rNeg = rhs.value.hasPrefix(AZDecimal.minusChar)
 

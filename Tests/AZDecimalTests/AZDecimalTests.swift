@@ -32,10 +32,9 @@ final class ArithmeticTests: XCTestCase {
         XCTAssertEqual(AZDecimal("-1.5") + AZDecimal("2.5"), AZDecimal("1"))
     }
 
-    func test_divideByZero_returnsError() {
-        // ゼロ除算はエラー番兵値（"-0"）を返す。
-        // AZDecimal("-0") は正規化で "0" になるため、生値を直接比較する
-        XCTAssertEqual((AZDecimal("123.45") / AZDecimal("0")).value, "-0")
+    func test_divideByZero_returnsNaN() {
+        // ゼロ除算は NaN を返す
+        XCTAssertTrue((AZDecimal("123.45") / AZDecimal("0")).isNaN)
     }
 
     func test_invalidCharacters_filtered() {
@@ -70,12 +69,11 @@ final class ArithmeticTests: XCTestCase {
         XCTAssertEqual(AZDecimal("0." + max9) + AZDecimal("0." + max0), AZDecimal("1"))
     }
 
-    func test_add_integerOverflow_returnsError() {
+    func test_add_integerOverflow_returnsNaN() {
         let half = AZDecimal.precision / 2
         let max9 = String(repeating: "9", count: half)
-        // 最大桁を超えるとオーバーフローエラー番兵値（"-0"）を返す。
-        // AZDecimal("-0") は正規化で "0" になるため、生値を直接比較する
-        XCTAssertEqual((AZDecimal(max9 + ".9") + AZDecimal("0.1")).value, "-0")
+        // 最大桁を超えるとオーバーフローで NaN を返す
+        XCTAssertTrue((AZDecimal(max9 + ".9") + AZDecimal("0.1")).isNaN)
     }
 
     func test_multiply_atMaxPrecision() {
@@ -223,7 +221,7 @@ final class ConvenienceTests: XCTestCase {
         XCTAssertTrue(AZDecimal("-1").isNegative)
         XCTAssertFalse(AZDecimal("0").isNegative)
         XCTAssertFalse(AZDecimal("1").isNegative)
-        XCTAssertFalse(AZDecimal("-0").isNegative)  // エラー値は負でない
+        XCTAssertFalse(AZDecimal("-0").isNegative)  // "-0" は正規化で "0" になる
     }
 
     func test_abs() {

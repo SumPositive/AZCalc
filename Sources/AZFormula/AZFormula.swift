@@ -18,6 +18,8 @@ public enum AZFormulaError: Error, Sendable {
     case negativeSqrt
     /// ゼロ除算
     case zeroDivision
+    /// オーバーフロー（精度桁数を超えた）
+    case overflow
     /// 評価できない式
     case invalidExpression
 }
@@ -386,6 +388,8 @@ public enum AZFormula {
         }
 
         guard stack.count == 1, let result = stack.first else { return .failure(.invalidExpression) }
+        // 演算途中でオーバーフロー等が起きると NaN が伝播する
+        if result.isNaN { return .failure(.overflow) }
         return .success(result)
     }
 }

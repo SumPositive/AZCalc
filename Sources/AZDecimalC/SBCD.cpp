@@ -126,8 +126,8 @@ static void sbcdToString( const SBCD *pSbcd, char *zAnswer)
     char c;
     bool isEnable = false;
 
-    // 負号
-    if(pSbcd->minus)  *zAnswer++ = SBCD_MINUS_SIGN;
+    // 負号　ゼロには付けない（"-0" はエラー番兵専用とするため、正当なゼロは常に "0"）
+    if(pSbcd->minus && !sbcdZero(pSbcd))  *zAnswer++ = SBCD_MINUS_SIGN;
     // 整数部
     for(i = 0; i < SBCD_PRECISION/2; i++) {			// 整数部
         c = pSbcd->digit[i];

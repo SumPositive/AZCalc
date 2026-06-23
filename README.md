@@ -65,6 +65,18 @@ a *= "2"   // 16
 a /= "4"   // 4
 ```
 
+### Invalid values (NaN) <sub>(2.0.0+)</sub>
+
+Division by zero and overflow produce a NaN value, following `Double` semantics.
+Prior to 2.0.0 these returned the internal `"-0"` sentinel string.
+
+```swift
+let bad = AZDecimal("1") / AZDecimal("0")
+bad.isNaN               // true
+bad == bad              // false — NaN is never equal to itself
+(bad + AZDecimal("1")).isNaN  // true — NaN propagates through operations
+```
+
 ### Rounding
 
 `decimalDigits` accepts values from `0` through `AZDecimalConfig.maxDecimalDigits`
@@ -204,6 +216,8 @@ if case .success(let a) = AZFormula.evaluateDecimal("10+5"),
 public enum AZFormulaError: Error {
     case tooLong          // formula exceeds AZFormula.maxFormulaLength characters (default: 200, settable at runtime)
     case negativeSqrt     // √ applied to a negative number
+    case zeroDivision     // division by zero          (2.0.0+)
+    case overflow         // exceeded the precision digit limit  (2.0.0+)
     case invalidExpression
 }
 ```
@@ -234,7 +248,7 @@ Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/SumPositive/AZCalc", from: "1.0.0")
+    .package(url: "https://github.com/SumPositive/AZCalc", from: "2.0.0")
 ]
 ```
 
