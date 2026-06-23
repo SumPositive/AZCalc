@@ -34,6 +34,7 @@ private let opDiv  = "÷"
 private let opDiv_ = "/"
 private let opSqrt = "√"
 private let opCbrt = "∛"
+private let opPow  = "^"
 private let opPerc = "%"
 private let opWari = "割"
 private let opBu   = "分"
@@ -41,8 +42,8 @@ private let opRi   = "厘"
 private let opPtL  = "("
 private let opPtR  = ")"
 
-private let allOperators  = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_]
-private let allowedFormulaChars = CharacterSet(charactersIn: "0123456789.-+*/×÷√∛()%割分厘")
+private let allOperators  = [opAdd, opSub, opMul, opMul_, opDiv, opDiv_, opPow]
+private let allowedFormulaChars = CharacterSet(charactersIn: "0123456789.-+*/×÷√∛^()%割分厘")
 
 // MARK: - AZFormula
 
@@ -184,8 +185,8 @@ public enum AZFormula {
         var current = ""
         var prevToken = ""
 
-        let operators: Set<Character> = Set("+-*/×÷√∛()%割分厘")
-        let signPrev:  Set<Character> = Set("+-*/×÷(√∛")
+        let operators: Set<Character> = Set("+-*/×÷√∛^()%割分厘")
+        let signPrev:  Set<Character> = Set("+-*/×÷^(√∛")
 
         for (index, char) in formula.enumerated() {
             guard operators.contains(char) else {
@@ -273,9 +274,12 @@ public enum AZFormula {
 
         // 中置二項演算子の優先度（数値が小さいほど高優先）
         let priority: [String: Int] = [
+            opPow: 0,
             opMul: 1, opDiv: 1, opMul_: 1, opDiv_: 1,
             opAdd: 2, opSub: 2
         ]
+        // 右結合の中置演算子（べき乗）。2^3^2 = 2^(3^2) と解釈する
+        let rightAssoc: Set<String> = [opPow]
         // 前置単項演算子（√・∛）は右結合のため priority マップと分離して管理
         // スタック上での優先度は 0（×÷ より高い）とみなしてポップ判定に使う
         let prefixUnary: Set<String> = [opSqrt, opCbrt]
@@ -296,9 +300,12 @@ public enum AZFormula {
             } else if let pri = priority[token] {
                 // 中置二項演算子：スタック上の高優先演算子を吐き出す
                 // 前置単項演算子はスタック上で priority 0 として扱う
+                // 右結合演算子は同位（<）でポップせず、左結合は同位以下（<=）でポップする
+                let popOnEqual = !rightAssoc.contains(token)
                 while let top = ope.last {
                     let topPri = priority[top] ?? (prefixUnary.contains(top) ? prefixUnaryPriority : Int.max)
-                    guard topPri <= pri else { break }
+                    let shouldPop = popOnEqual ? (topPri <= pri) : (topPri < pri)
+                    guard shouldPop else { break }
                     rpn.append(ope.removeLast())
                 }
                 ope.append(token)
@@ -369,6 +376,16 @@ public enum AZFormula {
                     stack.append(a / b)
                 default: break
                 }
+
+            case opPow:
+                guard 2 <= stack.count else { return .failure(.invalidExpression) }
+                let b = stack.removeLast()
+                let a = stack.removeLast()
+                // 指数は整数のみサポート（非整数指数は対数・指数関数が必要なため）
+                guard let exp = b.integerValue else { return .failure(.invalidExpression) }
+                let r = a.power(exp)
+                if r.isNaN { return .failure(.overflow) }
+                stack.append(r)
 
             case opSqrt:
                 guard 1 <= stack.count else { return .failure(.invalidExpression) }

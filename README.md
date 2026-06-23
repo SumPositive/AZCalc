@@ -65,6 +65,21 @@ a *= "2"   // 16
 a /= "4"   // 4
 ```
 
+### Power & remainder <sub>(2.0.0+)</sub>
+
+```swift
+AZDecimal("2").power(10)                      // 1024  (BCD-exact for integer exponents)
+AZDecimal("2").power(-3)                       // 0.125
+AZDecimal("10").remainder(dividingBy: "3")     // 1     (truncated remainder)
+
+AZDecimal("42").integerValue                   // Optional(42)
+AZDecimal("3.5").integerValue                  // nil
+```
+
+- `power(_:)` takes an `Int` exponent and uses exponentiation by squaring (exact for integer exponents; negative exponents use division and are truncated to precision).
+- `remainder(dividingBy:)` matches `Double.truncatingRemainder(dividingBy:)` (quotient truncated toward zero).
+- A NaN argument, `0` raised to a negative power, or a remainder by zero all yield NaN.
+
 ### Invalid values (NaN) <sub>(2.0.0+)</sub>
 
 Division by zero and overflow produce a NaN value, following `Double` semantics.
@@ -200,11 +215,20 @@ if case .success(let a) = AZFormula.evaluateDecimal("10+5"),
 | Operator | Description |
 |---|---|
 | `+` `-` `×` `÷` | Basic arithmetic (`*` `/` also accepted) |
+| `^` <sub>(2.0.0+)</sub> | Power — integer exponent only, right-associative, binds tighter than `× ÷` |
 | `√` | Square root — BCD Newton-Raphson, full precision |
 | `∛` | Cube root — BCD Newton-Raphson, full precision |
 | `( )` | Parentheses |
 | `%` | Percent — context-sensitive (see below) |
 | `割` `分` `厘` | Japanese percent notation |
+
+```swift
+AZFormula.evaluate("2^10")    // → .success("1024")
+AZFormula.evaluate("2*3^2")   // → .success("18")   power binds tighter than ×
+AZFormula.evaluate("2^3^2")   // → .success("512")  right-associative: 2^(3^2)
+```
+
+A non-integer exponent (e.g. `2^1.5`) returns `.invalidExpression`.
 
 ### Percent operator behavior
 

@@ -126,6 +126,45 @@ public struct AZDecimal: Sendable {
         return AZDecimal(cResult: String(cString: ans))
     }
 
+    /// 整数指数のべき乗を返す。二乗法で計算するため整数指数では BCD 厳密。
+    /// `exponent` が負のときは `1 / self^|exponent|`（除算のため精度桁で打ち切られる）。
+    /// `0` の負べきや NaN は NaN を返す。`x^0 == 1`（`0^0 == 1`）。
+    public func power(_ exponent: Int) -> AZDecimal {
+        if isNaN { return .nan }
+        if exponent == 0 { return .one }
+
+        let negative = exponent < 0
+        var n = Swift.abs(exponent)
+        var base = self
+        var result = AZDecimal.one
+        while 0 < n {
+            if n & 1 == 1 {
+                result = result.multiplied(by: base)
+                if result.isNaN { return .nan }
+            }
+            n >>= 1
+            if 0 < n {
+                base = base.multiplied(by: base)
+                if base.isNaN { return .nan }
+            }
+        }
+        if negative {
+            if result.isZero { return .nan }  // 0 の負べき → ゼロ除算
+            return AZDecimal.one.divided(by: result)
+        }
+        return result
+    }
+
+    /// `self` を `other` で割った剰余を返す（`Double.truncatingRemainder(dividingBy:)` 相当）。
+    /// 商を 0 方向に切り捨て、`self - trunc(self / other) * other` を計算する。
+    /// `other` が 0・NaN、または `self` が NaN のときは NaN。
+    public func remainder(dividingBy other: AZDecimal) -> AZDecimal {
+        if isNaN || other.isNaN || other.isZero { return .nan }
+        let quotient = divided(by: other)
+            .rounded(AZDecimalConfig(decimalDigits: 0, roundType: .truncateToDigits))
+        return subtracting(quotient.multiplied(by: other))
+    }
+
     // MARK: - プロパティ
 
     /// 無効値（オーバーフロー・ゼロ除算・不正演算の結果）かどうか。`Double.isNaN` に相当する。
@@ -140,6 +179,12 @@ public struct AZDecimal: Sendable {
     /// 絶対値。NaN は NaN。
     public var abs: AZDecimal {
         isNegative ? AZDecimal(String(value.dropFirst())) : self
+    }
+
+    /// 小数部を持たない整数値なら `Int` を返す。小数・NaN・`Int` 範囲外は `nil`。
+    public var integerValue: Int? {
+        if isNaN || value.contains(AZDecimal.dotChar) { return nil }
+        return Int(value)
     }
 
     // MARK: - 平方根・立方根

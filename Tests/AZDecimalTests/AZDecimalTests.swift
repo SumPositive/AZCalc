@@ -85,6 +85,51 @@ final class ArithmeticTests: XCTestCase {
         // 偶数丸めが適用される
         XCTAssertEqual(a * AZDecimal(max9 + "." + max9), AZDecimal("1"))
     }
+
+    // MARK: power
+
+    func test_power_positiveExponent() {
+        XCTAssertEqual(AZDecimal("2").power(10), AZDecimal("1024"))
+        XCTAssertEqual(AZDecimal("1.5").power(2), AZDecimal("2.25"))
+        XCTAssertEqual(AZDecimal("-2").power(3), AZDecimal("-8"))
+        XCTAssertEqual(AZDecimal("-2").power(2), AZDecimal("4"))
+    }
+
+    func test_power_zeroExponent() {
+        XCTAssertEqual(AZDecimal("5").power(0), AZDecimal("1"))
+        XCTAssertEqual(AZDecimal("0").power(0), AZDecimal("1"))  // 0^0 = 1（規約）
+    }
+
+    func test_power_negativeExponent() {
+        XCTAssertEqual(AZDecimal("2").power(-1), AZDecimal("0.5"))
+        XCTAssertEqual(AZDecimal("2").power(-3), AZDecimal("0.125"))
+        XCTAssertTrue(AZDecimal("0").power(-1).isNaN)  // 0 の負べき → NaN
+    }
+
+    func test_power_nan() {
+        XCTAssertTrue((AZDecimal("1") / AZDecimal("0")).power(2).isNaN)
+    }
+
+    // MARK: remainder
+
+    func test_remainder() {
+        XCTAssertEqual(AZDecimal("10").remainder(dividingBy: AZDecimal("3")), AZDecimal("1"))
+        XCTAssertEqual(AZDecimal("10.5").remainder(dividingBy: AZDecimal("3")), AZDecimal("1.5"))
+        XCTAssertEqual(AZDecimal("-10").remainder(dividingBy: AZDecimal("3")), AZDecimal("-1"))  // 0 方向切り捨て
+    }
+
+    func test_remainder_byZero_isNaN() {
+        XCTAssertTrue(AZDecimal("10").remainder(dividingBy: AZDecimal("0")).isNaN)
+    }
+
+    // MARK: integerValue
+
+    func test_integerValue() {
+        XCTAssertEqual(AZDecimal("42").integerValue, 42)
+        XCTAssertEqual(AZDecimal("-7").integerValue, -7)
+        XCTAssertNil(AZDecimal("3.5").integerValue)
+        XCTAssertNil((AZDecimal("1") / AZDecimal("0")).integerValue)
+    }
 }
 
 // MARK: - 丸め

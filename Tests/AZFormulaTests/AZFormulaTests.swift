@@ -200,6 +200,31 @@ final class EvaluateTests: XCTestCase {
         XCTAssertEqual(value("-(20-5)"), "-15")
     }
 
+    func test_power_basic() {
+        XCTAssertEqual(value("2^10"), "1024")
+        XCTAssertEqual(value("3^3"), "27")
+    }
+
+    func test_power_higherPrecedenceThanMul() {
+        // 2 * 3^2 = 2 * 9 = 18（べき乗が乗算より優先）
+        XCTAssertEqual(value("2*3^2"), "18")
+    }
+
+    func test_power_rightAssociative() {
+        // 2^3^2 = 2^(3^2) = 2^9 = 512
+        XCTAssertEqual(value("2^3^2"), "512")
+    }
+
+    func test_power_negativeExponent() {
+        // 2^-3 = 0.125
+        XCTAssertEqual(value("2^-3"), "0.125")
+    }
+
+    func test_power_nonIntegerExponent_isError() {
+        // 非整数指数は未対応
+        XCTAssertEqual(error("2^1.5"), .invalidExpression)
+    }
+
     func test_percent_add() {
         // 100 + 5% → 100×(100+5)÷100 = 105
         XCTAssertEqual(value("100+5%"), "105")
