@@ -33,8 +33,9 @@ final class ArithmeticTests: XCTestCase {
     }
 
     func test_divideByZero_returnsError() {
-        // ゼロ除算はエラー値（"-0"）を返す
-        XCTAssertEqual(AZDecimal("123.45") / AZDecimal("0"), AZDecimal("-0"))
+        // ゼロ除算はエラー番兵値（"-0"）を返す。
+        // AZDecimal("-0") は正規化で "0" になるため、生値を直接比較する
+        XCTAssertEqual((AZDecimal("123.45") / AZDecimal("0")).value, "-0")
     }
 
     func test_invalidCharacters_filtered() {
@@ -72,8 +73,9 @@ final class ArithmeticTests: XCTestCase {
     func test_add_integerOverflow_returnsError() {
         let half = AZDecimal.precision / 2
         let max9 = String(repeating: "9", count: half)
-        // 最大桁を超えるとオーバーフローエラー（"-0"）
-        XCTAssertEqual(AZDecimal(max9 + ".9") + AZDecimal("0.1"), AZDecimal("-0"))
+        // 最大桁を超えるとオーバーフローエラー番兵値（"-0"）を返す。
+        // AZDecimal("-0") は正規化で "0" になるため、生値を直接比較する
+        XCTAssertEqual((AZDecimal(max9 + ".9") + AZDecimal("0.1")).value, "-0")
     }
 
     func test_multiply_atMaxPrecision() {
