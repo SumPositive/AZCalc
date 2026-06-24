@@ -71,6 +71,25 @@ public enum AZFormula {
     /// アプリ起動時に変更できます（例: `AZFormula.maxFormulaLength = 500`）。
     public static var maxFormulaLength = 200
 
+    /// `percentDivisors` の既定値（`% → 100`、`割 → 10`、`分 → 100`、`厘 → 1000`）。
+    /// カスタマイズ後に元へ戻す際に使えます。
+    public static let defaultPercentDivisors: [Character: String] = [
+        Character(opPerc): "100",
+        Character(opWari): "10",
+        Character(opBu):   "100",
+        Character(opRi):   "1000",
+    ]
+
+    /// パーセント系記号と除数の対応表。
+    ///
+    /// デフォルトは日本式表記を含みます（`% → 100`、`割 → 10`、`分 → 100`、`厘 → 1000`）。
+    /// 実行時に差し替え可能です。例えば日本式表記を無効化したい場合は
+    /// `AZFormula.percentDivisors = ["%": "100"]` のように `%` のみへ絞れます。
+    ///
+    /// - Note: 既定の 4 記号（`% 割 分 厘`）以外の新しい記号を追加する場合は、
+    ///   その文字が許可文字に含まれないため数式評価前にフィルタで除去されます。
+    public static var percentDivisors: [Character: String] = defaultPercentDivisors
+
     // MARK: - 公開 API
 
     /// 数式文字列を評価して結果を返す。
@@ -207,19 +226,10 @@ public enum AZFormula {
                 }
             }
 
-            // パーセント系（%・割・分・厘）
-            if char == Character(opPerc) || char == Character(opWari)
-                || char == Character(opBu) || char == Character(opRi) {
+            // パーセント系（%・割・分・厘）。除数は percentDivisors から引く
+            if let per = percentDivisors[char] {
                 guard isNumericToken(current) else {
                     return .failure(.invalidExpression)
-                }
-
-                let per: String
-                switch char {
-                case Character(opWari): per = "10"
-                case Character(opPerc), Character(opBu): per = "100"
-                case Character(opRi): per = "1000"
-                default: per = "1"
                 }
 
                 if tokens.isEmpty || !allOperators.contains(tokens.last ?? "") {

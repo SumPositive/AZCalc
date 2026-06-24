@@ -245,6 +245,23 @@ final class EvaluateTests: XCTestCase {
         XCTAssertEqual(value("100÷5%"), "2000")
     }
 
+    func test_japanesePercent_wariBuRi() {
+        // 割=10, 分=100, 厘=1000（デフォルト）
+        XCTAssertEqual(value("1000×2割"), "200")
+        XCTAssertEqual(value("1000×3分"), "30")
+        XCTAssertEqual(value("1000×5厘"), "5")
+    }
+
+    func test_percentDivisors_configurable() {
+        defer { AZFormula.percentDivisors = AZFormula.defaultPercentDivisors }
+        // 日本式表記を無効化（% のみ残す）すると 割 は評価できない
+        AZFormula.percentDivisors = ["%": "100"]
+        XCTAssertEqual(value("100×5%"), "5")
+        guard case .failure = AZFormula.evaluate("1000×2割") else {
+            return XCTFail("割 should be unrecognized when removed from percentDivisors")
+        }
+    }
+
     func test_sqrt() {
         XCTAssertEqual(value("√25"), "5")
     }

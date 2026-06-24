@@ -253,6 +253,20 @@ A non-integer exponent (e.g. `2^1.5`) returns `.invalidExpression`.
 | `100×5%` | `100×5÷100` | `5` |
 | `100÷5%` | `100÷5×100` | `2000` |
 
+#### Percent symbols <sub>(2.0.0+)</sub>
+
+The percent symbols and their divisors are exposed via `AZFormula.percentDivisors`
+(default: `% → 100`, `割 → 10`, `分 → 100`, `厘 → 1000`). Override it at runtime — for
+example, to disable the Japanese notation and keep only `%`:
+
+```swift
+AZFormula.percentDivisors = ["%": "100"]
+// ...
+AZFormula.percentDivisors = AZFormula.defaultPercentDivisors  // restore
+```
+
+> Symbols other than the default four (`% 割 分 厘`) are stripped by the input filter before evaluation, so customize values for the existing symbols rather than adding new ones.
+
 ### Error cases
 
 ```swift
