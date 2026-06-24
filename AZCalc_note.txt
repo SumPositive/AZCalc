@@ -26,6 +26,14 @@ AZFormula: ^（べき乗、右結合）トークン追加。% は既にパーセ
 
 Codable 準拠：AZDecimal を value 文字列1本で符号化
 
+エラー診断の細分化
+AZFormulaError に .unmatchedParenthesis（括弧不一致）と .missingOperand（オペランド不足）を追加
+
+
+#4（AZFormula 関数サポート）
+
+#5（パーセント定数公開）
+
 
 
 

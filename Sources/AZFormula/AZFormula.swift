@@ -20,7 +20,11 @@ public enum AZFormulaError: Error, Sendable {
     case zeroDivision
     /// オーバーフロー（精度桁数を超えた）
     case overflow
-    /// 評価できない式
+    /// 括弧の対応が取れていない
+    case unmatchedParenthesis
+    /// 演算子に対してオペランドが不足している
+    case missingOperand
+    /// 評価できない式（上記以外）
     case invalidExpression
 }
 
@@ -316,7 +320,7 @@ public enum AZFormula {
                     rpn.append(ope.removeLast())
                 }
                 guard ope.last == opPtL else {
-                    return .failure(.invalidExpression)
+                    return .failure(.unmatchedParenthesis)  // 対応する "(" がない
                 }
                 ope.removeLast()
             } else {
@@ -327,7 +331,7 @@ public enum AZFormula {
 
         while let op = ope.popLast() {
             guard op != opPtL else {
-                return .failure(.invalidExpression)
+                return .failure(.unmatchedParenthesis)  // 閉じられていない "("
             }
             rpn.append(op)
         }
@@ -364,7 +368,7 @@ public enum AZFormula {
         for token in tokens {
             switch token {
             case opAdd, opSub, opMul, opMul_, opDiv, opDiv_:
-                guard 2 <= stack.count else { return .failure(.invalidExpression) }
+                guard 2 <= stack.count else { return .failure(.missingOperand) }
                 let b = stack.removeLast()
                 let a = stack.removeLast()
                 switch token {
@@ -378,7 +382,7 @@ public enum AZFormula {
                 }
 
             case opPow:
-                guard 2 <= stack.count else { return .failure(.invalidExpression) }
+                guard 2 <= stack.count else { return .failure(.missingOperand) }
                 let b = stack.removeLast()
                 let a = stack.removeLast()
                 // 指数は整数のみサポート（非整数指数は対数・指数関数が必要なため）
@@ -388,13 +392,13 @@ public enum AZFormula {
                 stack.append(r)
 
             case opSqrt:
-                guard 1 <= stack.count else { return .failure(.invalidExpression) }
+                guard 1 <= stack.count else { return .failure(.missingOperand) }
                 let a = stack.removeLast()
                 if a.isNegative { return .failure(.negativeSqrt) }
                 stack.append(a.squareRoot())
 
             case opCbrt:
-                guard 1 <= stack.count else { return .failure(.invalidExpression) }
+                guard 1 <= stack.count else { return .failure(.missingOperand) }
                 let a = stack.removeLast()
                 stack.append(a.cubeRoot())
 

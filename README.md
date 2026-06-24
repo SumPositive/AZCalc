@@ -257,11 +257,13 @@ A non-integer exponent (e.g. `2^1.5`) returns `.invalidExpression`.
 
 ```swift
 public enum AZFormulaError: Error {
-    case tooLong          // formula exceeds AZFormula.maxFormulaLength characters (default: 200, settable at runtime)
-    case negativeSqrt     // √ applied to a negative number
-    case zeroDivision     // division by zero          (2.0.0+)
-    case overflow         // exceeded the precision digit limit  (2.0.0+)
-    case invalidExpression
+    case tooLong               // formula exceeds AZFormula.maxFormulaLength characters (default: 200, settable at runtime)
+    case negativeSqrt          // √ applied to a negative number
+    case zeroDivision          // division by zero                    (2.0.0+)
+    case overflow              // exceeded the precision digit limit  (2.0.0+)
+    case unmatchedParenthesis  // mismatched parentheses              (2.0.0+)
+    case missingOperand        // operator without enough operands    (2.0.0+)
+    case invalidExpression     // anything else (unknown token, etc.)
 }
 ```
 

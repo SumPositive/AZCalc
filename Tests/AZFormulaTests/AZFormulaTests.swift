@@ -294,9 +294,15 @@ final class EvaluateTests: XCTestCase {
     }
 
     func test_invalidMismatchedParentheses_returnError() {
-        // 対応する括弧がない場合は式エラーにする
-        XCTAssertEqual(error("1)"), .invalidExpression)
-        XCTAssertEqual(error("1+(2"), .invalidExpression)
+        // 括弧の不一致は専用エラーで返す
+        XCTAssertEqual(error("1)"), .unmatchedParenthesis)
+        XCTAssertEqual(error("1+(2"), .unmatchedParenthesis)
+    }
+
+    func test_missingOperand_returnsError() {
+        // 演算子に対してオペランドが不足
+        XCTAssertEqual(error("1+"), .missingOperand)
+        XCTAssertEqual(error("×5"), .missingOperand)
     }
 
     func test_zeroDivision_returnsError() {

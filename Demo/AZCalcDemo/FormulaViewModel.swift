@@ -40,8 +40,10 @@ final class FormulaViewModel {
         case .tooLong:            String(localized: "formula.error.tooLong")
         case .negativeSqrt:       String(localized: "formula.error.negativeSqrt")
         case .zeroDivision:       String(localized: "formula.error.zeroDivision")
-        case .overflow:           String(localized: "formula.error.overflow")
-        case .invalidExpression:  String(localized: "formula.error.invalidExpression")
+        case .overflow:               String(localized: "formula.error.overflow")
+        case .unmatchedParenthesis:   String(localized: "formula.error.unmatchedParenthesis")
+        case .missingOperand:         String(localized: "formula.error.missingOperand")
+        case .invalidExpression:      String(localized: "formula.error.invalidExpression")
         }
     }
 }
