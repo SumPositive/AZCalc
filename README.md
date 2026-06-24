@@ -92,6 +92,20 @@ bad == bad              // false — NaN is never equal to itself
 (bad + AZDecimal("1")).isNaN  // true — NaN propagates through operations
 ```
 
+### Codable <sub>(2.0.0+)</sub>
+
+`AZDecimal` conforms to `Codable`, encoded as a single string (its `value`). This makes persistence — saving calculator state, history, or amounts — a one-liner. NaN round-trips correctly.
+
+```swift
+struct Receipt: Codable { let total: AZDecimal }
+
+let data = try JSONEncoder().encode(Receipt(total: "1234.56"))
+// {"total":"1234.56"}
+
+let restored = try JSONDecoder().decode(Receipt.self, from: data)
+restored.total          // AZDecimal("1234.56")
+```
+
 ### Rounding
 
 `decimalDigits` accepts values from `0` through `AZDecimalConfig.maxDecimalDigits`

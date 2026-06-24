@@ -389,3 +389,22 @@ extension AZDecimal: ExpressibleByFloatLiteral {
 extension AZDecimal: CustomStringConvertible {
     public var description: String { value }
 }
+
+extension AZDecimal: Codable {
+    /// 内部値文字列1本で符号化する（NaN は `"nan"`）。
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        // NaN は init(_:) で消えるため明示的に復元する
+        if raw == AZDecimal.nanString {
+            self = .nan
+        } else {
+            self.init(raw)
+        }
+    }
+}

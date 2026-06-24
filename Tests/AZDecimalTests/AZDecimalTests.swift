@@ -484,3 +484,43 @@ final class RootTests: XCTestCase {
         XCTAssertTrue(result.filter(\.isNumber).count > 15, "BCD cbrt should exceed Double precision: \(result)")
     }
 }
+
+// MARK: - Codable
+
+final class CodableTests: XCTestCase {
+
+    private func roundTrip(_ value: AZDecimal) throws -> AZDecimal {
+        let data = try JSONEncoder().encode(value)
+        return try JSONDecoder().decode(AZDecimal.self, from: data)
+    }
+
+    func test_roundTrip_values() throws {
+        try XCTAssertEqual(roundTrip(AZDecimal("123.456")), AZDecimal("123.456"))
+        try XCTAssertEqual(roundTrip(AZDecimal("-0.5")), AZDecimal("-0.5"))
+        try XCTAssertEqual(roundTrip(AZDecimal.zero), AZDecimal.zero)
+    }
+
+    func test_roundTrip_nan() throws {
+        // NaN は等値比較できないため isNaN で確認する
+        try XCTAssertTrue(roundTrip(AZDecimal("1") / AZDecimal("0")).isNaN)
+    }
+
+    func test_encodesAsSingleString() throws {
+        let data = try JSONEncoder().encode(AZDecimal("3.14"))
+        XCTAssertEqual(String(data: data, encoding: .utf8), "\"3.14\"")
+    }
+
+    func test_decodesFromString() throws {
+        let data = Data("\"42.5\"".utf8)
+        let decoded = try JSONDecoder().decode(AZDecimal.self, from: data)
+        XCTAssertEqual(decoded, AZDecimal("42.5"))
+    }
+
+    func test_codableInStruct() throws {
+        struct Wrapper: Codable, Equatable { let amount: AZDecimal }
+        let original = Wrapper(amount: AZDecimal("999.99"))
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(Wrapper.self, from: data)
+        XCTAssertEqual(decoded, original)
+    }
+}
