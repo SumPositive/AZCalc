@@ -29,12 +29,11 @@ Codable 準拠：AZDecimal を value 文字列1本で符号化
 エラー診断の細分化
 AZFormulaError に .unmatchedParenthesis（括弧不一致）と .missingOperand（オペランド不足）を追加
 
+パーセント記号・除数を percentDivisors で公開・設定可能にした
 
-#4（AZFormula 関数サポート）
-
-#5（パーセント定数公開）
-
-
+Localizable.xcstrings（デモアプリ）に追加した新キーをローカライズ対応して
+エラー: formula.error.overflow / formula.error.unmatchedParenthesis / formula.error.missingOperand（必要なら formula.error.zeroDivision）
+丸めモード: rounding.mode.truncateToDigits.* / rounding.mode.keepFull.* / rounding.keepFull.footer
 
 
 --------------------------------

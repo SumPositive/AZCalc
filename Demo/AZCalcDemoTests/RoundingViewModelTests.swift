@@ -7,9 +7,9 @@ import AZDecimal
 @MainActor
 final class RoundingViewModelTests: XCTestCase {
 
-    func test_rowCount_is7() {
+    func test_rowCount_is8() {
         let vm = RoundingViewModel()
-        XCTAssertEqual(vm.rows.count, 7)
+        XCTAssertEqual(vm.rows.count, 8)
     }
 
     func test_allModes_present() {

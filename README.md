@@ -12,7 +12,7 @@ Two products in one package:
 
 | Product | Description |
 |---|---|
-| **AZDecimal** | Signed BCD decimal arithmetic — 60-digit precision, 7 rounding modes |
+| **AZDecimal** | Signed BCD decimal arithmetic — 60-digit precision, 8 rounding modes |
 | **AZFormula** | Formula string evaluator — parses and evaluates infix expressions |
 
 ## Demo
