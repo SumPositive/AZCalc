@@ -84,6 +84,8 @@ AZDecimal("3.5").integerValue                  // nil
 
 Division by zero and overflow produce a NaN value, following `Double` semantics.
 Prior to 2.0.0 these returned the internal `"-0"` sentinel string.
+Starting with 2.1.0, multiplication also detects digit overflow and returns NaN
+when the product exceeds the configured precision limit.
 
 ```swift
 let bad = AZDecimal("1") / AZDecimal("0")
