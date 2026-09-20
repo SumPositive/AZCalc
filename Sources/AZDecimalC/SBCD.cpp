@@ -203,9 +203,20 @@ static bool sbcAbsSub( char *pValue1, char *pValue2, char *pAns )
     return (fall == 1);
 }
 //---------------------------------------------------------------------------
-// 掛け算（Trueが返った場合は結果が負）
+// 掛け算（桁あふれしたら true を返す。その場合 pAns の内容は不定）
+//
+// 【桁あふれの判定】
+// 積は cBuf[0 〜 SBCD_PRECISION*2-1] に固定小数点を中央にして求まるが、
+// 答えとして取り出せるのは cBuf[SBCD_PRECISION/2 〜 SBCD_PRECISION/2+SBCD_PRECISION-1]
+// の範囲だけ。それより上位（cBuf[0 〜 SBCD_PRECISION/2-1]）に 0 でない桁が
+// 残っていれば、その分は答えに入らない＝桁あふれである。
+//
+// ＃以前は cBuf[0] > 9 だけを見ていたため、
+//   cBuf[1] 以降にあふれた場合（16桁×16桁 など）を取りこぼしていた。
+//   さらに、あふれ時に pAns へ何も書かずに戻っていたので、
+//   呼び出し側が未初期化のメモリを見て「あふれ無し」と誤判定していた
 //---------------------------------------------------------------------------
-static void sbcAbsMulti( char *pValue1, char *pValue2, char *pAns )
+static bool sbcAbsMulti( char *pValue1, char *pValue2, char *pAns )
 {
     int i, j;
     int iCarry;
@@ -229,7 +240,10 @@ static void sbcAbsMulti( char *pValue1, char *pValue2, char *pAns )
         cBuf[i] = iCarry;
     }
 
-	if ( 9 < cBuf[0] ) return;  // Overflow : 最上位BCDが9より大きい
+	// 答えの範囲より上位に桁が残っていれば桁あふれ
+	for ( i = 0; i < SBCD_PRECISION/2; i++ ) {
+		if ( cBuf[i] != 0x00 ) return true;
+	}
 
     // 固定小数点が中央にある
 	// cBuf[ 0 〜 SBCD_PRECISION ] 整数部
@@ -277,11 +291,12 @@ static void sbcAbsMulti( char *pValue1, char *pValue2, char *pAns )
 			char cRound[SBCD_PRECISION];		// 積の最大桁数は (SBCD_PRECISION * 2) 以下である
 			memset(&cRound[0], 0x00, SBCD_PRECISION);	// 初期化
 			cRound[SBCD_PRECISION-1] = 1;
-			// 符号無し和
-			sbcAbsAdd( pAns, cRound, pAns);
+			// 符号無し和。最上位から繰り上がったら桁あふれ
+			if ( sbcAbsAdd( pAns, cRound, pAns) ) return true;
 		}
 	}
 	// pAns[SBCD_PRECISION]以降に領域は無いので、AllZeroにする処理は不要
+	return false;
 }
 
 //---------------------------------------------------------------------------
@@ -440,8 +455,7 @@ extern "C" void stringMultiply( char *strAnswer, const char *strNum1, const char
 	stringToSbcd(strNum2, pSbcd2);
 	
     // 符号無し積
-	sbcAbsMulti(pSbcd1->digit, pSbcd2->digit, pSbcdAns->digit);
-	if ( 9 < pSbcdAns->digit[0]) { // 内部計算 Overflow
+	if ( sbcAbsMulti(pSbcd1->digit, pSbcd2->digit, pSbcdAns->digit) ) { // 内部計算 Overflow
 		strcpy( strAnswer, "-0" );
 		return;
 	}

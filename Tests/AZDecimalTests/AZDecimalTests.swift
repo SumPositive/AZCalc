@@ -86,6 +86,40 @@ final class ArithmeticTests: XCTestCase {
         XCTAssertEqual(a * AZDecimal(max9 + "." + max9), AZDecimal("1"))
     }
 
+    func test_multiply_integerOverflow_returnsNaN() {
+        let half = AZDecimal.precision / 2   // 整数部の桁数（30）
+        let max9 = String(repeating: "9", count: half)
+
+        // 最大桁 × 10 は入り切らない
+        XCTAssertTrue((AZDecimal(max9) * AZDecimal("10")).isNaN)
+        // 最大桁どうし
+        XCTAssertTrue((AZDecimal(max9) * AZDecimal(max9)).isNaN)
+        // 積がちょうど桁数を超えるところ（16桁 × 16桁 = 31〜32桁）。
+        // ＃以前は最上位1桁しか見ておらず、ここを取りこぼして
+        //   誤った値を正常な答えとして返していた
+        let d16 = String(repeating: "9", count: 16)
+        XCTAssertTrue((AZDecimal(d16) * AZDecimal(d16)).isNaN)
+        let d20 = String(repeating: "9", count: 20)
+        XCTAssertTrue((AZDecimal(d20) * AZDecimal(d20)).isNaN)
+    }
+
+    func test_multiply_atOverflowBoundary() {
+        // 桁数ぎりぎりは正しく計算できること（過剰に NaN にしない）
+        let d15 = String(repeating: "9", count: 15)
+        let product15 = AZDecimal(d15) * AZDecimal(d15)
+        XCTAssertFalse(product15.isNaN)
+        XCTAssertEqual(product15, AZDecimal("999999999999998000000000000001"))
+
+        // 30桁 × 1 はそのまま
+        let half = AZDecimal.precision / 2
+        let max9 = String(repeating: "9", count: half)
+        XCTAssertEqual(AZDecimal(max9) * AZDecimal("1"), AZDecimal(max9))
+
+        // 0 を含む積・負の積も従来どおり
+        XCTAssertEqual(AZDecimal(max9) * AZDecimal("0"), AZDecimal("0"))
+        XCTAssertEqual(AZDecimal("-12") * AZDecimal("3"), AZDecimal("-36"))
+    }
+
     // MARK: power
 
     func test_power_positiveExponent() {
